@@ -5,7 +5,7 @@ pyofd.providers
 (c) Serge A. Levin, 2018
 """
 
-from pyofd.providers import *
+from .providers import *
 
 _ALL_CLASSES = [
     klass for

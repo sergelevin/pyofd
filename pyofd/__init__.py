@@ -44,8 +44,7 @@ class OFDReceipt:
         """
         self.signature = signature
         self.total = total
-
-        pass
+        self.items = []
 
     def load_receipt(self):
         """
@@ -56,9 +55,18 @@ class OFDReceipt:
         if hasattr(self, "provider"):
             return True
 
+        args = {
+            'signature' : self.signature,
+            'total'     : self.total,
+        }
         for provider in pyofd.providers.get_providers():
-            if provider.validate():
+            if not provider.is_candidate(**args):
+                continue
+
+            result = provider.validate(**args)
+            if result:
                 self.provider = provider
+                self.items = result.copy()
                 return True
 
         return False

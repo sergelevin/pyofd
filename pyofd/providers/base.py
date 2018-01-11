@@ -15,9 +15,17 @@ import io
 class Base:
     providerName = None
     urlTemplate = ''
+    requiredFields = ()
 
     def __init__(self):
         pass
+
+    def is_candidate(self, **kwargs):
+        for field in self.requiredFields:
+            if not field in kwargs or kwargs[field] is None:
+                return False
+
+        return True
 
     def validate(self, signature, total):
         context = {
