@@ -3,3 +3,4 @@
 
 from .dummy import ofdDummy
 from .taxcom import ofdTaxcom
+from .platforma import ofdPlatforma
