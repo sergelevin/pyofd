@@ -41,14 +41,19 @@ class ReceiptEntry:
 
 
 class OFDReceipt:
-    def __init__(self, signature, total):
+    def __init__(self, signature=None, total=None, cash_machine_no=None, receipt_no=None):
         """
         :param signature: Receipt signature (FPD in terms of Tax service of Russia)
         :param total: Receipt total
         """
-        self.signature = signature
-        self.total = total
+        fields = [k for k in locals().keys() if k != 'self']
+
+        for key in fields:
+            setattr(self, key, locals()[key])
+
         self.items = []
+        self.provider = None
+        self._fields = fields
 
     def load_receipt(self):
         """
@@ -56,13 +61,10 @@ class OFDReceipt:
 
         :return: True if could validate and load receipt data, False otherwise
         """
-        if hasattr(self, "provider"):
+        if self.provider:
             return True
 
-        args = {
-            'signature' : self.signature,
-            'total'     : self.total,
-        }
+        args = {k: getattr(self, k, None) for k in self._fields}
         for provider in pyofd.providers.get_providers():
             if not provider.is_candidate(**args):
                 continue

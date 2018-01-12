@@ -22,17 +22,15 @@ class Base:
 
     def is_candidate(self, **kwargs):
         for field in self.requiredFields:
-            if not field in kwargs or kwargs[field] is None:
+            if field not in kwargs or kwargs[field] is None:
                 return False
 
         return True
 
-    def validate(self, signature, total):
-        context = {
-            'signature': signature,
-            'total'    : total,
-        }
-        q_context = { ('q_' + k): _parse.quote(str(v)) for k, v in context.items() }
+    def validate(self, signature=None, total=None, cash_machine_no=None, receipt_no=None):
+        context = {k: v for k, v in locals().items() if k != 'self'}
+
+        q_context = { ('q_' + k): _parse.quote(str(v)) for k, v in context.items() if v is not None}
         context.update(q_context)
 
         url = self.urlTemplate.format(**context)
