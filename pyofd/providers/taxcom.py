@@ -15,7 +15,7 @@ import lxml.html
 class ofdTaxcom(Base):
     providerName = 'Taxcom'
     urlTemplate = 'https://receipt.taxcom.ru/v01/show?fp={signature}&s={total}'
-    #urlTemplate = 'http://localhost:8000/good'
+    requiredFields = ('signature', 'total')
 
     not_found = 'Такой чек не найден'
 
