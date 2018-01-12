@@ -9,6 +9,7 @@ pyofd
 import pyofd.providers
 from functools import total_ordering
 
+
 @total_ordering
 class ReceiptEntry:
     def __init__(self, title, price, qty, subtotal):
@@ -29,12 +30,15 @@ class ReceiptEntry:
     def __eq__(self, other):
         if not self._is_comparable(other):
             return NotImplemented
-        return (self.title, self.price, self.quantity, self.subtotal) == (other.title, other.price, other.quantity, other.subtotal)
+        return (self.title, self.price, self.quantity, self.subtotal) == \
+               (other.title, other.price, other.quantity, other.subtotal)
 
     def __le__(self, other):
         if not self._is_comparable(other):
             return NotImplemented
-        return (self.title, self.price, self.quantity, self.subtotal) < (other.title, other.price, other.quantity, other.subtotal)
+        return (self.title, self.price, self.quantity, self.subtotal) < \
+               (other.title, other.price, other.quantity, other.subtotal)
+
 
 class OFDReceipt:
     def __init__(self, signature, total):

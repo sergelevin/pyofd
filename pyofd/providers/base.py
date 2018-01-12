@@ -59,4 +59,3 @@ class Base:
         :return: list of pyofd.ReceiptEntry if data is recognised
         """
         pass
-
