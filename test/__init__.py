@@ -6,7 +6,7 @@ from os.path import dirname
 import unittest
 
 
-def load_tests():
+def test_suite():
     suite = unittest.TestSuite()
     base = dirname(__file__)
     for file in listdir(base):
@@ -18,4 +18,4 @@ def load_tests():
 
 
 def run_tests():
-    unittest.main(defaultTest='test.load_tests')
+    unittest.main(defaultTest='test.test_suite')
