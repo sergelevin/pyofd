@@ -27,7 +27,15 @@ class Base:
 
         return True
 
-    def validate(self, signature=None, total=None, cash_machine_no=None, receipt_no=None):
+    def validate(
+            self,
+            signature=None,
+            total=None,
+            cash_machine_no=None,
+            receipt_no=None,
+            taxpayer_id=None,
+            purchase_date=None,
+    ):
         context = {k: v for k, v in locals().items() if k != 'self'}
 
         q_context = { ('q_' + k): _parse.quote(str(v)) for k, v in context.items() if v is not None}

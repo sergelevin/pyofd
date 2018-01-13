@@ -41,10 +41,22 @@ class ReceiptEntry:
 
 
 class OFDReceipt:
-    def __init__(self, signature=None, total=None, cash_machine_no=None, receipt_no=None):
+    def __init__(
+            self,
+            signature=None,
+            total=None,
+            cash_machine_no=None,
+            receipt_no=None,
+            taxpayer_id=None,
+            purchase_date=None,
+    ):
         """
         :param signature: Receipt signature (FPD in terms of Tax service of Russia)
         :param total: Receipt total
+        :param cash_machine_no: Cash machine serian number (RN KKT)
+        :param receipt_no: Receipt fiscal number (FN)
+        :param taxpayer_id: Seller's taxpayer identifier (INN)
+        :param purchase_date: Purchase date and time
         """
         fields = [k for k in locals().keys() if k != 'self']
 
