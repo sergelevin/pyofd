@@ -22,6 +22,14 @@ receipts_data = {
         'taxpayer_id': 5036045205,
         'purchase_date': datetime(year=2018, month=1, day=10, hour=17, minute=37)
     },
+    '1-OFD': {
+        'signature': 2819037689,
+        'total': '1948.28',
+        'cash_machine_no': 8710000100828376,
+        'receipt_no': 87242,
+        'taxpayer_id': 7840016802,
+        'purchase_date': datetime(year=2017, month=9, day=30, hour=16, minute=7)
+    }
 }
 
 
@@ -41,3 +49,6 @@ class ProvidersTest(unittest.TestCase):
 
     def test_platforma(self):
         self._test_single_provider('Platforma')
+
+    def test_first_ofd(self):
+        self._test_single_provider('1-OFD')
