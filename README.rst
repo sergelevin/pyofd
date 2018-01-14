@@ -43,5 +43,17 @@ Here is basic usage example.
 might narrow the list of OFD providers to be checked against, because different providers require different
 subset of data to validate receipt
 
+Examples
+========
+
+For some basic examples read unit tests in `test`_ directory. More complicated examples can be found within
+`examples`_ directory.
+
+* `load_receipt.py <https://github.com/sergelevin/pyofd/blob/master/examples/load_receipt.py>`_: Load receipt by
+  known attributes and save items into tab-delimited file.
+
 .. _pip: https://pip.pypa.io/
 .. _bobby_boy: https://github.com/ohbobbyboy/bobby_boy/
+.. _test: https://github.com/sergelevin/pyofd/tree/master/test/
+.. _examples: https://github.com/sergelevin/pyofd/tree/master/examples/
+
