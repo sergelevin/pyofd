@@ -80,7 +80,7 @@ class ofd1OFD(Base):
 
         data = response.read()
         try:
-            return json.loads(data)
+            return json.loads(data.decode('utf-8'))
         except json.JSONDecodeError:
             return {}
 
