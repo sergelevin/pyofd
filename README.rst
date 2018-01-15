@@ -2,6 +2,9 @@
 pyofd - Python library for interacting with OFD providers
 =========================================================
 
+.. image:: https://travis-ci.org/sergelevin/pyofd.svg?branch=master
+    :target: https://travis-ci.org/sergelevin/pyofd
+
 ``pyofd`` is a Python package for receipts query from OFD providers.
 It is inspired by `bobby_boy`_ project.
 
