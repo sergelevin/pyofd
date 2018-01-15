@@ -49,7 +49,7 @@ class ofdPlatforma(Base):
             qty_and_price = [ item for item in rows[0].text.split(' ') if item ]
             quantity = qty_and_price[0]
             price    = qty_and_price[2]
-            subtotal = rows[2].text
+            subtotal = rows[-2].text
 
             return pyofd.ReceiptEntry(title=title, price=price, qty=quantity, subtotal=subtotal)
         except:

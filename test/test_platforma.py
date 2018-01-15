@@ -6,19 +6,25 @@ import pyofd
 
 class PlatformaTest(unittest.TestCase):
     valid_receipt_items = [
-            pyofd.ReceiptEntry(title='КАРАМЕЛЬ ЧУПА ЧУПС ФРУКТОВАЯ В' , qty='2'    , price='7.19' , subtotal='14.38'),
-            pyofd.ReceiptEntry(title='БАНАНЫ ВЕС'                     , qty='1.035', price='53.90', subtotal='55.79'),
-            pyofd.ReceiptEntry(title='КРУАССАНЫ 7 DAYS МИНИ КАКАО 30' , qty='1'    , price='96.90', subtotal='96.90'),
-            pyofd.ReceiptEntry(title='СЫРОК-СУФЛЕ ГЛАЗИР.ВАНИЛЬ Б.Ю.' , qty='6'    , price='44.90', subtotal='269.40'),
-            pyofd.ReceiptEntry(title='СЫРОК ГЛ. Б.Ю.АЛЕКСАНДРОВ 26%'  , qty='1'    , price='31.43', subtotal='31.43'),
-            pyofd.ReceiptEntry(title='СЫРОК ГЛ. Б.Ю.АЛЕКСАНДРОВ 26%'  , qty='1'    , price='31.43', subtotal='31.43'),
-            pyofd.ReceiptEntry(title='ДРАЖЕ ТИК ТАК МЯТА/АПЕЛЬСИН 16' , qty='1'    , price='45.00', subtotal='45.00'),
-            pyofd.ReceiptEntry(title='ДРАЖЕ ТИК ТАК МЯТА/АПЕЛЬСИН 16' , qty='1'    , price='45.00', subtotal='45.00'),
-            pyofd.ReceiptEntry(title='ЙОГУРТ РАСТИШКА 3% КЛУБНИКА 11' , qty='2'    , price='17.99', subtotal='35.98'),
-            pyofd.ReceiptEntry(title='ХЛЕБ РЖАНОЙ БУЛОЧНАЯ №1 ПОДОВЫ', qty='1'    , price='14.90', subtotal='14.90'),
-            pyofd.ReceiptEntry(title='ХЛЕБ РЖАНОЙ НАР.415Г КР'        , qty='1'    , price='24.90', subtotal='24.90'),
-            pyofd.ReceiptEntry(title='ЯЙЦО КИНДЕР СЮРПРИЗ ИЗ МОЛОЧ.Ш' , qty='2'    , price='78.90', subtotal='157.80'),
-        ]
+        pyofd.ReceiptEntry(title='КАРАМЕЛЬ ЧУПА ЧУПС ФРУКТОВАЯ В' , qty='2'    , price='7.19' , subtotal='14.38'),
+        pyofd.ReceiptEntry(title='БАНАНЫ ВЕС'                     , qty='1.035', price='53.90', subtotal='55.79'),
+        pyofd.ReceiptEntry(title='КРУАССАНЫ 7 DAYS МИНИ КАКАО 30' , qty='1'    , price='96.90', subtotal='96.90'),
+        pyofd.ReceiptEntry(title='СЫРОК-СУФЛЕ ГЛАЗИР.ВАНИЛЬ Б.Ю.' , qty='6'    , price='44.90', subtotal='269.40'),
+        pyofd.ReceiptEntry(title='СЫРОК ГЛ. Б.Ю.АЛЕКСАНДРОВ 26%'  , qty='1'    , price='31.43', subtotal='31.43'),
+        pyofd.ReceiptEntry(title='СЫРОК ГЛ. Б.Ю.АЛЕКСАНДРОВ 26%'  , qty='1'    , price='31.43', subtotal='31.43'),
+        pyofd.ReceiptEntry(title='ДРАЖЕ ТИК ТАК МЯТА/АПЕЛЬСИН 16' , qty='1'    , price='45.00', subtotal='45.00'),
+        pyofd.ReceiptEntry(title='ДРАЖЕ ТИК ТАК МЯТА/АПЕЛЬСИН 16' , qty='1'    , price='45.00', subtotal='45.00'),
+        pyofd.ReceiptEntry(title='ЙОГУРТ РАСТИШКА 3% КЛУБНИКА 11' , qty='2'    , price='17.99', subtotal='35.98'),
+        pyofd.ReceiptEntry(title='ХЛЕБ РЖАНОЙ БУЛОЧНАЯ №1 ПОДОВЫ', qty='1'    , price='14.90', subtotal='14.90'),
+        pyofd.ReceiptEntry(title='ХЛЕБ РЖАНОЙ НАР.415Г КР'        , qty='1'    , price='24.90', subtotal='24.90'),
+        pyofd.ReceiptEntry(title='ЯЙЦО КИНДЕР СЮРПРИЗ ИЗ МОЛОЧ.Ш' , qty='2'    , price='78.90', subtotal='157.80'),
+    ]
+
+    alt_valid_receipt_items = [
+        pyofd.ReceiptEntry(title='Kонструктор LEGO CITY "Грузовой вертолет исследователей джунглей', qty='1', price='1195.00', subtotal='1195.00'),
+        pyofd.ReceiptEntry(title='Kонструктор LEGO Elves "Тайная лечебница Розалин"(41187)', qty='1', price='3399.00', subtotal='3399.00'),
+        pyofd.ReceiptEntry(title='Пакет LEGO Medium(Medium)', qty='1', price='0.00', subtotal='0.00'),
+    ]
 
     def setUp(self):
         self.provider = pyofd.providers.platforma.ofdPlatforma()
@@ -32,6 +38,10 @@ class PlatformaTest(unittest.TestCase):
     def test_valid_parse(self):
         result = self.provider.validate(signature=504931317, cash_machine_no=8710000100186516, receipt_no=136682)
         self.assertEqual(self.valid_receipt_items, result)
+
+    def test_alt_receipt(self):
+        result = self.provider.validate(signature=1154793488, cash_machine_no=8710000100199134, receipt_no=12659)
+        self.assertEqual(self.alt_valid_receipt_items, result)
 
     def test_provider(self):
         receipt = pyofd.OFDReceipt(signature=504931317, cash_machine_no=8710000100186516, receipt_no=136682)
