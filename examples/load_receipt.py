@@ -10,10 +10,12 @@ import pyofd
 import argparse
 import sys
 import os
+import urllib.parse
+import datetime
 
 parser = argparse.ArgumentParser(description='Example script to export receipt to tab-delimited file')
 parser.add_argument('-fp', '--signature', '--fpd',
-                    dest='signature', help='Fiscal document signature, also known as FPD', required=True)
+                    dest='signature', help='Fiscal document signature, also known as FPD')
 parser.add_argument('-s', '--sum', '--total',
                     dest='total', help='Receipt total')
 parser.add_argument('-i', '-fd',
@@ -24,6 +26,10 @@ parser.add_argument('-inn', '--taxpayer',
                     dest='taxpayer_id', help='Merchant taxpayer ID (INN)')
 parser.add_argument('-kkt', '--cash-machine-number',
                     dest='cash_machine_no', help='Cash machine registration number, also known as RN KKT')
+parser.add_argument('-d', '--datetime',
+                    dest='purchase_date', help='Date and time of purchase')
+parser.add_argument('-url',
+                    dest='url', help='URL from recognized QR-code')
 
 parser.add_argument('-o', '--output',
                     dest='out_file_name', help='File name to write receipt data to. Desfault is to write'
@@ -38,9 +44,40 @@ def smart_open(filename):
     else:
         return os.fdopen(os.dup(sys.stdout.fileno()), 'w')
 
+
+def parse_date_time(date_time_str):
+    try:
+        return datetime.datetime.strptime(date_time_str, '%Y%m%dT%H%M%S')
+    except ValueError:
+        return datetime.datetime.strptime(date_time_str, '%Y%m%dT%H%M')
+
+
+def parse_url(url):
+    mapping = {
+        # first go standard fields
+        's': 'total', 'fn': 'cash_machine_no', 'i': 'receipt_no', 'fp': 'signature',
+        # then - nonstandard, but used by providers
+        'inn': 'taxpayer_id'
+    }
+    fields = urllib.parse.parse_qs(url)
+
+    result = {v: fields[k][0] for k, v in mapping.items() if k in fields}
+    if 't' in fields:
+        result['purchase_date'] = parse_date_time(fields['t'][0])
+    return result
+
+
 def main(argv):
     arguments = parser.parse_args(argv)
-    receipt_fields = {k: getattr(arguments, k) for k in fields if hasattr(arguments, k)}
+    receipt_fields = {k: getattr(arguments, k)
+                      for k in fields
+                      if hasattr(arguments, k) and getattr(arguments, k) is not None}
+    date_time_str = getattr(arguments, 'purchase_date', None)
+    if date_time_str is not None:
+        receipt_fields['purchase_date'] = parse_date_time(date_time_str)
+    url = getattr(arguments, 'url', None)
+    if url is not None:
+        receipt_fields.update(parse_url(url))
 
     receipt = pyofd.OFDReceipt(**receipt_fields)
     result = receipt.load_receipt()

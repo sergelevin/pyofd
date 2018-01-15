@@ -27,6 +27,7 @@ class ofd1OFD(Base):
             total=None,
             cash_machine_no=None,
             receipt_no=None,
+            fiscal_no=None,
             taxpayer_id=None,
             purchase_date=None,
     ):

@@ -59,6 +59,7 @@ class Base:
             total=None,
             cash_machine_no=None,
             receipt_no=None,
+            fiscal_no=None,
             taxpayer_id=None,
             purchase_date=None,
     ):
@@ -67,10 +68,10 @@ class Base:
         :param signature: Receipt signature (FPD in terms of Tax service of Russia)
         :param total: Receipt total
         :param cash_machine_no: Cash machine serian number (RN KKT)
-        :param receipt_no: Receipt fiscal number (FN)
+        :param receipt_no: Receipt number (FD)
+        :param fiscal_no: Receipt fiscal number (FN)
         :param taxpayer_id: Seller's taxpayer identifier (INN)
         :param purchase_date: Purchase date and time
-        :return: List of items within receipt or None
         """
         context = {k: v for k, v in locals().items() if k != 'self'}
 
