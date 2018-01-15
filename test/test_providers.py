@@ -29,7 +29,15 @@ receipts_data = {
         'receipt_no': 87242,
         'taxpayer_id': 7840016802,
         'purchase_date': datetime(year=2017, month=9, day=30, hour=16, minute=7)
-    }
+    },
+    'Yarus':{
+        'signature': 4023651155,
+        'total': '526.00',
+        'cash_machine_no': 691164058512,
+        'receipt_no': 34113,
+        'taxpayer_id': 7705814643,
+        'purchase_date': datetime(year=2018, month=1, day=13, hour=20, minute=44)
+    },
 }
 
 
@@ -52,3 +60,6 @@ class ProvidersTest(unittest.TestCase):
 
     def test_first_ofd(self):
         self._test_single_provider('1-OFD')
+
+    def test_yarus(self):
+        self._test_single_provider('Yarus')
