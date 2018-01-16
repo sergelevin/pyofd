@@ -10,7 +10,7 @@ from .providers import *
 _ALL_CLASSES = [
     klass for
     name, klass in globals().items()
-    if name.startswith('ofd')
+    if name.startswith('ofd') and isinstance(klass, type)
 ]
 
 

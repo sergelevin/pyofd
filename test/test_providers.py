@@ -31,13 +31,22 @@ receipts_data = {
         'inn': 7840016802,
         'purchase_date': datetime(year=2017, month=9, day=30, hour=16, minute=7)
     },
-    'Yarus':{
+    'Yarus': {
         'fpd': 4023651155,
         'total': '526.00',
         'rn_kkt': 691164058512,
         'fd': 34113,
         'inn': 7705814643,
         'purchase_date': datetime(year=2018, month=1, day=13, hour=20, minute=44)
+    },
+    'OfdRu': {
+        'fpd': 2981623349,
+        'total': 330,
+        'rn_kkt': 489397013091,
+        'fd': 7481,
+        'inn': 7814339162,
+        'fn': 8710000100617432,
+        'purchase_date': datetime(year=2018, month=1, day=16, hour=13, minute=11)
     },
 }
 
@@ -64,3 +73,6 @@ class ProvidersTest(unittest.TestCase):
 
     def test_yarus(self):
         self._test_single_provider('Yarus')
+
+    def test_ofd_ru(self):
+        self._test_single_provider('OfdRu')
