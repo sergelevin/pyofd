@@ -37,8 +37,8 @@ Here is basic usage example.
     import pyofd, datetime
 
     receipt = pyofd.OFDReceipt(
-        signature='FPD', total='total', cache_machine_no='RN_KKT',
-        receipt_no='FD', taxpayer_id='INN', purchase_date=datetime.datetime.now()
+        fpd='FPD', total='total', rn_kkt='RN_KKT', fn='FN',
+        fd='FD', inn='INN', purchase_date=datetime.datetime.now()
     )
     result = receipt.load_receipt()
 

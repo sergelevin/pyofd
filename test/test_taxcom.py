@@ -25,17 +25,17 @@ class TaxcomTest(unittest.TestCase):
         self.provider = pyofd.providers.taxcom.ofdTaxcom()
 
     def test_provider_invalid(self):
-        self.assertIsNone(self.provider.validate(signature=0, total=0))
+        self.assertIsNone(self.provider.validate(fpd=0, total=0))
 
     def test_provider_minimal(self):
-        self.assertIsNotNone(self.provider.validate(signature=1027455652, total=1487))
+        self.assertIsNotNone(self.provider.validate(fpd=1027455652, total=1487))
 
     def test_valid_parse(self):
-        result = self.provider.validate(signature=1027455652, total=1487)
+        result = self.provider.validate(fpd=1027455652, total=1487)
         self.assertEqual(self.valid_receipt_items, result)
 
     def test_provider(self):
-        receipt = pyofd.OFDReceipt(signature=1027455652, total=1487)
+        receipt = pyofd.OFDReceipt(fpd=1027455652, total=1487)
 
         result = receipt.load_receipt()
 

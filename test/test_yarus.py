@@ -20,17 +20,17 @@ class YarusTest(unittest.TestCase):
         self.provider = pyofd.providers.yarus.ofdYarus()
 
     def test_provider_invalid(self):
-        self.assertIsNone(self.provider.validate(signature='0'*10, cash_machine_no='0'*16))
+        self.assertIsNone(self.provider.validate(fpd='0'*10, rn_kkt='0'*16))
 
     def test_provider_minimal(self):
-        self.assertIsNotNone(self.provider.validate(signature='4023651155', cash_machine_no='0000691164058512'))
+        self.assertIsNotNone(self.provider.validate(fpd='4023651155', rn_kkt='0000691164058512'))
 
     def test_valid_parse(self):
-        result = self.provider.validate(signature='4023651155', cash_machine_no='0000691164058512')
+        result = self.provider.validate(fpd='4023651155', rn_kkt='0000691164058512')
         self.assertEqual(self.valid_receipt_items, result)
 
     def test_provider(self):
-        receipt = pyofd.OFDReceipt(signature='4023651155', cash_machine_no='0000691164058512')
+        receipt = pyofd.OFDReceipt(fpd='4023651155', rn_kkt='0000691164058512')
 
         result = receipt.load_receipt()
 

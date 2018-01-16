@@ -13,8 +13,8 @@ import json
 
 class ofdYarus(Base):
     providerName = 'Yarus'
-    urlTemplate = 'https://ofd-ya.ru/getFiscalDoc?kktRegId={cash_machine_no:0>16}&fiscalSign={signature:0>10}&json=true'
-    requiredFields = ('cash_machine_no', 'signature')
+    urlTemplate = 'https://ofd-ya.ru/getFiscalDoc?kktRegId={rn_kkt:0>16}&fiscalSign={fpd:0>10}&json=true'
+    requiredFields = ('rn_kkt', 'fpd')
 
     def parse_response(self, data):
         raw_data = json.loads(data.read().decode('utf-8'))

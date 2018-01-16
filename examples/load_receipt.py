@@ -14,18 +14,18 @@ import urllib.parse
 import datetime
 
 parser = argparse.ArgumentParser(description='Example script to export receipt to tab-delimited file')
-parser.add_argument('-fp', '--signature', '--fpd',
-                    dest='signature', help='Fiscal document signature, also known as FPD')
+parser.add_argument('-fp', '-fpd',
+                    dest='fpd', help='Fiscal document fpd, also known as FPD')
 parser.add_argument('-s', '--sum', '--total',
                     dest='total', help='Receipt total')
 parser.add_argument('-i', '-fd',
-                    dest='receipt_no', help='Receipt number, also known as FD')
+                    dest='fd', help='Receipt number, also known as FD')
 parser.add_argument('-fn',
-                    dest='fiscal_no', help='Receipt fiscal number, also known as FN')
-parser.add_argument('-inn', '--taxpayer',
-                    dest='taxpayer_id', help='Merchant taxpayer ID (INN)')
-parser.add_argument('-kkt', '--cash-machine-number',
-                    dest='cash_machine_no', help='Cash machine registration number, also known as RN KKT')
+                    dest='fn', help='Receipt fiscal number, also known as FN')
+parser.add_argument('-inn',
+                    dest='inn', help='Merchant taxpayer ID (INN)')
+parser.add_argument('-kkt',
+                    dest='rn_kkt', help='Cash machine registration number, also known as RN KKT')
 parser.add_argument('-d', '--datetime',
                     dest='purchase_date', help='Date and time of purchase')
 parser.add_argument('-url',
@@ -35,7 +35,7 @@ parser.add_argument('-o', '--output',
                     dest='out_file_name', help='File name to write receipt data to. Desfault is to write'
                     'to standard output', default='-')
 
-fields = ('signature', 'total', 'receipt_no', 'taxpayer_id', 'cash_machine_no')
+fields = ('fpd', 'total', 'fd', 'inn', 'rn_kkt', 'fn')
 
 
 def smart_open(filename):
@@ -54,10 +54,10 @@ def parse_date_time(date_time_str):
 
 def parse_url(url):
     mapping = {
-        # first go standard fields
-        's': 'total', 'fn': 'cash_machine_no', 'i': 'receipt_no', 'fp': 'signature',
+        # first go standard fields. Date and time is parsed separately below
+        's': 'total', 'fn': 'fn', 'i': 'fd', 'fp': 'fpd',
         # then - nonstandard, but used by providers
-        'inn': 'taxpayer_id'
+        'inn': 'inn', 'rn_kkt': 'rn_kkt'
     }
     fields = urllib.parse.parse_qs(url)
 

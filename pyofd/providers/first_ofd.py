@@ -17,24 +17,24 @@ import json
 class ofd1OFD(Base):
     providerName = '1-OFD'
     urlTemplate = None
-    requiredFields = ('signature', 'cash_machine_no', 'receipt_no')
+    requiredFields = ('fpd', 'fn', 'fd')
     urlPhase1 = 'https://consumer.1-ofd.ru/api/tickets/find-ticket'
     urlPhase2 = 'https://consumer.1-ofd.ru/api/tickets/ticket/{receipt_guid}'
 
     def validate(
             self,
-            signature=None,
+            fpd=None,
             total=None,
-            cash_machine_no=None,
-            receipt_no=None,
-            fiscal_no=None,
-            taxpayer_id=None,
+            rn_kkt=None,
+            fd=None,
+            fn=None,
+            inn=None,
             purchase_date=None,
     ):
         request_body = json.dumps({
-            'fiscalDriveId': str(cash_machine_no),
-            'fiscalDocumentNumber': str(receipt_no),
-            'fiscalId': str(signature),
+            'fiscalDriveId': str(fn),
+            'fiscalDocumentNumber': str(fd),
+            'fiscalId': str(fpd),
         }, separators=(',', ':'))
         request = self._build_request(self.urlPhase1, request_body)
 

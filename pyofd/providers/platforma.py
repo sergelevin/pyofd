@@ -15,8 +15,8 @@ import lxml.html
 
 class ofdPlatforma(Base):
     providerName = 'Platforma'
-    urlTemplate = 'https://lk.platformaofd.ru/web/noauth/cheque?fn={cash_machine_no}&fp={signature}&i={receipt_no}'
-    requiredFields = ('signature', 'cash_machine_no', 'receipt_no')
+    urlTemplate = 'https://lk.platformaofd.ru/web/noauth/cheque?fn={fn}&fp={fpd}&i={fd}'
+    requiredFields = ('fpd', 'fn', 'fd')
 
     def parse_response(self, data):
         tree = lxml.html.parse(data)

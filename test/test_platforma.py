@@ -30,21 +30,21 @@ class PlatformaTest(unittest.TestCase):
         self.provider = pyofd.providers.platforma.ofdPlatforma()
 
     def test_provider_invalid(self):
-        self.assertIsNone(self.provider.validate(signature=0, cash_machine_no=0, receipt_no=0))
+        self.assertIsNone(self.provider.validate(fpd=0, fn=0, fd=0))
 
     def test_provider_minimal(self):
-        self.assertIsNotNone(self.provider.validate(signature=504931317, cash_machine_no=8710000100186516, receipt_no=136682))
+        self.assertIsNotNone(self.provider.validate(fpd=504931317, fn=8710000100186516, fd=136682))
 
     def test_valid_parse(self):
-        result = self.provider.validate(signature=504931317, cash_machine_no=8710000100186516, receipt_no=136682)
+        result = self.provider.validate(fpd=504931317, fn=8710000100186516, fd=136682)
         self.assertEqual(self.valid_receipt_items, result)
 
     def test_alt_receipt(self):
-        result = self.provider.validate(signature=1154793488, cash_machine_no=8710000100199134, receipt_no=12659)
+        result = self.provider.validate(fpd=1154793488, fn=8710000100199134, fd=12659)
         self.assertEqual(self.alt_valid_receipt_items, result)
 
     def test_provider(self):
-        receipt = pyofd.OFDReceipt(signature=504931317, cash_machine_no=8710000100186516, receipt_no=136682)
+        receipt = pyofd.OFDReceipt(fpd=504931317, fn=8710000100186516, fd=136682)
 
         result = receipt.load_receipt()
 
