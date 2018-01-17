@@ -69,17 +69,24 @@ class OFDReceipt:
         self.provider = None
         self._fields = fields
 
-    def load_receipt(self):
+    def load_receipt(self, check_providers=None):
         """
         Validates data over known OFD providers and loads receipt details
 
+        :param check_providers: Single provider instance or iterable of providers to load receipt from
         :return: True if could validate and load receipt data, False otherwise
         """
         if self.provider:
             return True
 
+        if check_providers:
+            if not hasattr(check_providers, '__iter__'):
+                check_providers = (check_providers,)
+        else:
+            check_providers = pyofd.providers.get_providers()
+
         args = {k: getattr(self, k, None) for k in self._fields}
-        for provider in pyofd.providers.get_providers():
+        for provider in check_providers:
             if not provider.is_candidate(**args):
                 continue
 

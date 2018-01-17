@@ -53,6 +53,14 @@ class Base:
 
         return True
 
+    def get_request_url(self, **context):
+        """ Builds URL or Request object for the OFD
+
+        :param context: receipt parameters with their url-quoted version
+        :return: built URL
+        """
+        return self.urlTemplate.format(**context)
+
     def validate(
             self,
             fpd=None,
@@ -78,7 +86,7 @@ class Base:
         q_context = { ('q_' + k): _parse.quote(str(v)) for k, v in context.items() if v is not None}
         context.update(q_context)
 
-        url = self.urlTemplate.format(**context)
+        url = self.get_request_url(**context)
 
         try:
             response = _request.urlopen(url)

@@ -1,0 +1,64 @@
+# -*- coding: utf-8 -*-
+
+import unittest
+import pyofd.providers.nalog
+import pyofd
+import pyofd.providers
+import os
+
+
+class NalogRuTest(unittest.TestCase):
+    valid_receipt_items = [
+        pyofd.ReceiptEntry(title='Салат"Новый русский"', qty='1', price='79.00' , subtotal='79.00' ),
+        pyofd.ReceiptEntry(title='Бульон мал'          , qty='1', price='44.00' , subtotal='44.00' ),
+        pyofd.ReceiptEntry(title='Рулетик куриный'     , qty='1', price='139.00', subtotal='139.00'),
+        pyofd.ReceiptEntry(title='Макароны'            , qty='1', price='45.00' , subtotal='45.00' ),
+        pyofd.ReceiptEntry(title='Компот'              , qty='1', price='20.00' , subtotal='20.00' ),
+        pyofd.ReceiptEntry(title='Хлеб'                , qty='1', price='3.00'  , subtotal='3.00'  ),
+    ]
+
+    @classmethod
+    def setUpClass(cls):
+        pyofd.providers.nalog.NalogRu.apiLogin = os.environ.get('PYOFD_NALOGRU_LOGIN', None)
+        pyofd.providers.nalog.NalogRu.apiPassword = os.environ.get('PYOFD_NALOGRU_PASSWORD', None)
+
+    @classmethod
+    def tearDownClass(cls):
+        pyofd.providers.nalog.NalogRu.apiLogin = None
+        pyofd.providers.nalog.NalogRu.apiPassword = None
+
+    def setUp(self):
+        self.provider = pyofd.providers.nalog.NalogRu()
+
+    def test_class(self):
+        self.assertEqual(self.provider.__class__, pyofd.providers.NalogRu)
+
+    @unittest.skipIf(pyofd.providers.nalog.NalogRu.apiLogin is None or pyofd.providers.nalog.NalogRu.apiPassword is None,
+                     'Nalog.Ru credentials not provided')
+    def test_provider_invalid(self):
+        self.assertIsNone(self.provider.validate(fpd='0'*10, rn_kkt='0'*16, inn='0'*10, fn='0'*16, fd=0))
+
+    @unittest.skipIf(pyofd.providers.nalog.NalogRu.apiLogin is None or pyofd.providers.nalog.NalogRu.apiPassword is None,
+                     'Nalog.Ru credentials not provided')
+    def test_provider_minimal(self):
+        self.assertIsNotNone(self.provider.validate(
+            fpd='2981623349', inn='7814339162', rn_kkt='0000489397013091', fn='8710000100617432', fd=7481))
+
+    @unittest.skipIf(pyofd.providers.nalog.NalogRu.apiLogin is None or pyofd.providers.nalog.NalogRu.apiPassword is None,
+                     'Nalog.Ru credentials not provided')
+    def test_valid_parse(self):
+        result = self.provider.validate(
+            fpd='2981623349', rn_kkt='0000489397013091', inn='7814339162', fn='8710000100617432', fd=7481)
+        self.assertEqual(self.valid_receipt_items, result)
+
+    @unittest.skipIf(pyofd.providers.nalog.NalogRu.apiLogin is None or pyofd.providers.nalog.NalogRu.apiPassword is None,
+                     'Nalog.Ru credentials not provided')
+    def test_provider(self):
+        receipt = pyofd.OFDReceipt(
+            fpd='2981623349', rn_kkt='0000489397013091', inn='7814339162', fn='8710000100617432', fd=7481)
+
+        result = receipt.load_receipt(check_providers = self.provider)
+
+        self.assertEqual(True, result)
+        self.assertIs(receipt.provider.__class__, self.provider.__class__)
+        self.assertEqual(self.valid_receipt_items, receipt.items)
