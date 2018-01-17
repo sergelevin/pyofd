@@ -30,30 +30,30 @@ class NalogRuTest(unittest.TestCase):
     def setUp(self):
         self.provider = pyofd.providers.nalog.NalogRu()
 
+    def _skip_if_no_credentials(self):
+        if pyofd.providers.nalog.NalogRu.apiLogin is None or pyofd.providers.nalog.NalogRu.apiPassword is None:
+            raise unittest.SkipTest('Nalog.Ru credentials not provided')
+
     def test_class(self):
         self.assertEqual(self.provider.__class__, pyofd.providers.NalogRu)
 
-    @unittest.skipIf(pyofd.providers.nalog.NalogRu.apiLogin is None or pyofd.providers.nalog.NalogRu.apiPassword is None,
-                     'Nalog.Ru credentials not provided')
     def test_provider_invalid(self):
+        self._skip_if_no_credentials()
         self.assertIsNone(self.provider.validate(fpd='0'*10, rn_kkt='0'*16, inn='0'*10, fn='0'*16, fd=0))
 
-    @unittest.skipIf(pyofd.providers.nalog.NalogRu.apiLogin is None or pyofd.providers.nalog.NalogRu.apiPassword is None,
-                     'Nalog.Ru credentials not provided')
     def test_provider_minimal(self):
+        self._skip_if_no_credentials()
         self.assertIsNotNone(self.provider.validate(
             fpd='2981623349', inn='7814339162', rn_kkt='0000489397013091', fn='8710000100617432', fd=7481))
 
-    @unittest.skipIf(pyofd.providers.nalog.NalogRu.apiLogin is None or pyofd.providers.nalog.NalogRu.apiPassword is None,
-                     'Nalog.Ru credentials not provided')
     def test_valid_parse(self):
+        self._skip_if_no_credentials()
         result = self.provider.validate(
             fpd='2981623349', rn_kkt='0000489397013091', inn='7814339162', fn='8710000100617432', fd=7481)
         self.assertEqual(self.valid_receipt_items, result)
 
-    @unittest.skipIf(pyofd.providers.nalog.NalogRu.apiLogin is None or pyofd.providers.nalog.NalogRu.apiPassword is None,
-                     'Nalog.Ru credentials not provided')
     def test_provider(self):
+        self._skip_if_no_credentials()
         receipt = pyofd.OFDReceipt(
             fpd='2981623349', rn_kkt='0000489397013091', inn='7814339162', fn='8710000100617432', fd=7481)
 
