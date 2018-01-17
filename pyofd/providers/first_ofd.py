@@ -12,6 +12,7 @@ from .base import Base
 import pyofd
 import urllib.request as _request
 import json
+from decimal import Decimal
 
 
 class ofd1OFD(Base):
@@ -86,19 +87,12 @@ class ofd1OFD(Base):
             return {}
 
     @staticmethod
-    def _fix_point(s):
-        int = s[:-2] or '0'
-        frac=s[-2:] or '0'
-        if len(frac) == 1:
-            frac='0' + frac
-        return '.'.join((int, frac,))
-
-    def _parse_entry(self, entry):
+    def _parse_entry(entry):
         try:
-            subtotal = self._fix_point(str(entry['sum']))
-            quantity = str(entry['quantity'])
-            price = self._fix_point(str(entry['price']))
-            name = str(entry['name'])
+            subtotal = Decimal(str(entry['sum'])) / 100
+            quantity = Decimal(str(entry['quantity']))
+            price = Decimal(str(entry['price'])) / 100
+            name = entry['name']
 
             return pyofd.ReceiptEntry(name, price, quantity, subtotal)
         except KeyError:

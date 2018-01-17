@@ -21,9 +21,9 @@ class PlatformaTest(unittest.TestCase):
     ]
 
     alt_valid_receipt_items = [
-        pyofd.ReceiptEntry(title='Kонструктор LEGO CITY "Грузовой вертолет исследователей джунглей', qty='1', price='1195.00', subtotal='1195.00'),
-        pyofd.ReceiptEntry(title='Kонструктор LEGO Elves "Тайная лечебница Розалин"(41187)', qty='1', price='3399.00', subtotal='3399.00'),
-        pyofd.ReceiptEntry(title='Пакет LEGO Medium(Medium)', qty='1', price='0.00', subtotal='0.00'),
+        pyofd.ReceiptEntry(title='Kонструктор LEGO CITY "Грузовой вертолет исследователей джунглей', qty=1, price=1195, subtotal=1195.00),
+        pyofd.ReceiptEntry(title='Kонструктор LEGO Elves "Тайная лечебница Розалин"(41187)', qty=1, price=3399, subtotal=3399.00),
+        pyofd.ReceiptEntry(title='Пакет LEGO Medium(Medium)', qty=1, price=0, subtotal=0),
     ]
 
     def setUp(self):

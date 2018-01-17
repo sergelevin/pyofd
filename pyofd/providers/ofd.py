@@ -9,6 +9,7 @@ OFD.Ru OFD provider.
 from .base import Base
 import pyofd
 import json
+from decimal import Decimal
 
 
 class ofdOfdRu(Base):
@@ -34,18 +35,11 @@ class ofdOfdRu(Base):
         return result or None
 
     @staticmethod
-    def _fix_point(s):
-        int = s[:-2] or '0'
-        frac=s[-2:] or '0'
-        if len(frac) == 1:
-            frac='0' + frac
-        return '.'.join((int, frac,))
-
-    def _parse_entry(self, entry):
+    def _parse_entry(entry):
         try:
-            subtotal = self._fix_point(str(entry['Total']))
+            subtotal = Decimal(str(entry['Total'])) / 100
             quantity = str(entry['Quantity'])
-            price = self._fix_point(str(entry['Price']))
+            price = Decimal(str(entry['Price'])) / 100
             name = str(entry['Name'])
 
             return pyofd.ReceiptEntry(name, price, quantity, subtotal)

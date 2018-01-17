@@ -8,15 +8,16 @@ pyofd
 
 import pyofd.providers
 from functools import total_ordering
+from decimal import Decimal
 
 
 @total_ordering
 class ReceiptEntry:
     def __init__(self, title, price, qty, subtotal):
         self.title = title
-        self.price = price
-        self.quantity = qty
-        self.subtotal = subtotal
+        self.price = Decimal(price)
+        self.quantity = Decimal(qty)
+        self.subtotal = Decimal(subtotal)
 
     @staticmethod
     def _is_comparable(other):
@@ -38,6 +39,9 @@ class ReceiptEntry:
             return NotImplemented
         return (self.title, self.price, self.quantity, self.subtotal) < \
                (other.title, other.price, other.quantity, other.subtotal)
+
+    def __repr__(self):
+        return '"{}": {}x{} ({})'.format(self.title, self.quantity, self.price, self.subtotal)
 
 
 class OFDReceipt:

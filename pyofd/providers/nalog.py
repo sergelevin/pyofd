@@ -11,6 +11,7 @@ import pyofd
 import json
 import urllib.request as _request
 import base64
+from decimal import Decimal
 
 
 class NalogRu(Base):
@@ -52,19 +53,11 @@ class NalogRu(Base):
 
         return result or None
 
-    @staticmethod
-    def _fix_point(s):
-        int = s[:-2] or '0'
-        frac=s[-2:] or '0'
-        if len(frac) == 1:
-            frac = '0' + frac
-        return '.'.join((int, frac,))
-
     def _parse_entry(self, entry):
         try:
-            subtotal = self._fix_point(str(entry['sum']))
+            subtotal = Decimal(str(entry['sum'])) / 100
             quantity = str(entry['quantity'])
-            price = self._fix_point(str(entry['price']))
+            price = Decimal(str(entry['price'])) / 100
             name = str(entry['name'])
 
             return pyofd.ReceiptEntry(name, price, quantity, subtotal)

@@ -7,12 +7,12 @@ import pyofd
 
 class OfdRuTest(unittest.TestCase):
     valid_receipt_items = [
-        pyofd.ReceiptEntry(title='Салат"Новый русский"', qty='1.0', price='79.00' , subtotal='79.00' ),
-        pyofd.ReceiptEntry(title='Бульон мал'          , qty='1.0', price='44.00' , subtotal='44.00' ),
-        pyofd.ReceiptEntry(title='Рулетик куриный'     , qty='1.0', price='139.00', subtotal='139.00'),
-        pyofd.ReceiptEntry(title='Макароны'            , qty='1.0', price='45.00' , subtotal='45.00' ),
-        pyofd.ReceiptEntry(title='Компот'              , qty='1.0', price='20.00' , subtotal='20.00' ),
-        pyofd.ReceiptEntry(title='Хлеб'                , qty='1.0', price='3.00'  , subtotal='3.00'  ),
+        pyofd.ReceiptEntry(title='Салат"Новый русский"', qty=1, price=79 , subtotal=79 ),
+        pyofd.ReceiptEntry(title='Бульон мал'          , qty=1, price=44 , subtotal=44 ),
+        pyofd.ReceiptEntry(title='Рулетик куриный'     , qty=1, price=139, subtotal=139),
+        pyofd.ReceiptEntry(title='Макароны'            , qty=1, price=45 , subtotal=45 ),
+        pyofd.ReceiptEntry(title='Компот'              , qty=1, price=20 , subtotal=20 ),
+        pyofd.ReceiptEntry(title='Хлеб'                , qty=1, price=3  , subtotal=3  ),
     ]
 
     def setUp(self):

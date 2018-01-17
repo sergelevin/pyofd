@@ -9,6 +9,7 @@ Yarus OFD provider.
 from .base import Base
 import pyofd
 import json
+from decimal import Decimal
 
 
 class ofdYarus(Base):
@@ -33,18 +34,11 @@ class ofdYarus(Base):
         return result or None
 
     @staticmethod
-    def _fix_point(s):
-        int = s[:-2] or '0'
-        frac=s[-2:] or '0'
-        if len(frac) == 1:
-            frac='0' + frac
-        return '.'.join((int, frac,))
-
-    def _parse_entry(self, entry):
+    def _parse_entry(entry):
         try:
-            subtotal = self._fix_point(str(entry['sum']))
+            subtotal = Decimal(str(entry['sum'])) / 100
             quantity = str(entry['quantity'])
-            price = self._fix_point(str(entry['price']))
+            price = Decimal(str(entry['price'])) / 100
             name = str(entry['name'])
 
             return pyofd.ReceiptEntry(name, price, quantity, subtotal)
