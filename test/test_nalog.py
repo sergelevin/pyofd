@@ -50,7 +50,8 @@ class NalogRuTest(unittest.TestCase):
         self._skip_if_no_credentials()
         result = self.provider.validate(
             fpd='2981623349', rn_kkt='0000489397013091', inn='7814339162', fn='8710000100617432', fd=7481)
-        self.assertEqual(self.valid_receipt_items, result)
+        self.assertIsNotNone(result)
+        self.assertEqual(self.valid_receipt_items, result.items)
 
     def test_provider(self):
         self._skip_if_no_credentials()

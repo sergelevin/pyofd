@@ -10,9 +10,27 @@ pyofd.providers.first_ofd
 
 from .base import Base
 import pyofd
+import pyofd.providers
 import urllib.request as _request
 import json
 from decimal import Decimal
+import datetime
+
+
+def _strip(value):
+    return str(value).strip()
+
+
+def _to_decimal(value):
+    return Decimal(str(value))
+
+
+def _to_datetime(value):
+    """ Example: 2018-01-18T22:42:35.413
+
+    :return: datetime with milliseconds stripped
+    """
+    return datetime.datetime.strptime(str(value + '000'), '%Y-%m-%dT%H:%M:%S.%f')
 
 
 class ofd1OFD(Base):
@@ -21,6 +39,23 @@ class ofd1OFD(Base):
     requiredFields = ('fpd', 'fn', 'fd')
     urlPhase1 = 'https://consumer.1-ofd.ru/api/tickets/find-ticket'
     urlPhase2 = 'https://consumer.1-ofd.ru/api/tickets/ticket/{receipt_guid}'
+
+    _jsonTicketFieldsMapping = {
+        'user': ('seller_name', _strip),
+        'totalSum': ('total', _to_decimal),
+        'userInn': ('inn', _strip),
+        'fiscalDriveNumber': ('fn', _strip),
+        'fiscalDocumentNumber': ('fd', _strip),
+        'fiscalId': ('fpd', _strip),
+        'shiftNumber': ('shift_no', int),
+        'requestNumber': ('receipt_no', int),
+        'kktRegId': ('rn_kkt', _strip),
+        'transactionDate': ('purchase_date', _to_datetime),
+    }
+
+    _jsonRootFieldsMapping = {
+        'retailPlaceAddress': ('seller_address', _strip),
+    }
 
     def validate(
             self,
@@ -57,7 +92,11 @@ class ofd1OFD(Base):
             if entry:
                 result.append(entry)
 
-        return result or None
+        if result:
+            ticket = data['ticket']
+            recognized_fields = {v[0]: v[1](ticket[k]) for k, v in self._jsonTicketFieldsMapping.items() if k in ticket}
+            recognized_fields.update({v[0]: v[1](data[k]) for k, v in self._jsonRootFieldsMapping.items() if k in data})
+            return pyofd.providers.Result(items=result, **recognized_fields)
 
     @staticmethod
     def _build_request(url, data):
@@ -89,11 +128,14 @@ class ofd1OFD(Base):
     @staticmethod
     def _parse_entry(entry):
         try:
-            subtotal = Decimal(str(entry['sum'])) / 100
-            quantity = Decimal(str(entry['quantity']))
-            price = Decimal(str(entry['price'])) / 100
-            name = entry['name']
+            subtotal = _to_decimal(entry['sum']) / 100
+            quantity = _to_decimal(entry['quantity'])
+            price = _to_decimal(entry['price']) / 100
+            name = _strip(entry['name'])
 
             return pyofd.ReceiptEntry(name, price, quantity, subtotal)
         except KeyError:
             return None
+
+
+__all__ = ['ofd1OFD']

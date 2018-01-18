@@ -21,7 +21,8 @@ class FirstOFDTest(unittest.TestCase):
 
     def test_valid_parse(self):
         result = self.provider.validate(fpd=2819037689, fn=8710000100828376, fd=87242)
-        self.assertEqual(self.valid_receipt_items, result)
+        self.assertIsNotNone(result)
+        self.assertEqual(self.valid_receipt_items, result.items)
 
     def test_provider(self):
         receipt = pyofd.OFDReceipt(fpd=2819037689, fn=8710000100828376, fd=87242)

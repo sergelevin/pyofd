@@ -27,7 +27,8 @@ class YarusTest(unittest.TestCase):
 
     def test_valid_parse(self):
         result = self.provider.validate(fpd='4023651155', rn_kkt='0000691164058512')
-        self.assertEqual(self.valid_receipt_items, result)
+        self.assertIsNotNone(result)
+        self.assertEqual(self.valid_receipt_items, result.items)
 
     def test_provider(self):
         receipt = pyofd.OFDReceipt(fpd='4023651155', rn_kkt='0000691164058512')

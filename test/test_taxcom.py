@@ -32,7 +32,8 @@ class TaxcomTest(unittest.TestCase):
 
     def test_valid_parse(self):
         result = self.provider.validate(fpd=1027455652, total=1487)
-        self.assertEqual(self.valid_receipt_items, result)
+        self.assertIsNotNone(result)
+        self.assertEqual(self.valid_receipt_items, result.items)
 
     def test_provider(self):
         receipt = pyofd.OFDReceipt(fpd=1027455652, total=1487)

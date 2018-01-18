@@ -69,7 +69,7 @@ class OFDReceipt:
         for key in fields:
             setattr(self, key, locals()[key])
 
-        self.items = []
+        self.result = None
         self.provider = None
         self._fields = fields
 
@@ -97,7 +97,14 @@ class OFDReceipt:
             result = provider.validate(**args)
             if result:
                 self.provider = provider
-                self.items = result.copy()
+                self.result = result
                 return True
 
         return False
+
+    @property
+    def items(self):
+        if self.result and self.result.items:
+            return self.result.items.copy()
+        else:
+            return []

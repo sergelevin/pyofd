@@ -26,7 +26,8 @@ class OfdRuTest(unittest.TestCase):
 
     def test_valid_parse(self):
         result = self.provider.validate(fpd='2981623349', rn_kkt='0000489397013091', inn='7814339162', fn='8710000100617432')
-        self.assertEqual(self.valid_receipt_items, result)
+        self.assertIsNotNone(result)
+        self.assertEqual(self.valid_receipt_items, result.items)
 
     def test_provider(self):
         receipt = pyofd.OFDReceipt(fpd='2981623349', rn_kkt='0000489397013091', inn='7814339162', fn='8710000100617432')

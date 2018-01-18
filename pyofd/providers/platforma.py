@@ -11,6 +11,7 @@ Platforma OFD provider.
 from .base import Base
 import pyofd
 import lxml.html
+import pyofd.providers
 
 
 class ofdPlatforma(Base):
@@ -37,7 +38,8 @@ class ofdPlatforma(Base):
             if candidate:
                 result.append(candidate)
 
-        return result or None
+        if result:
+            return pyofd.providers.Result(items=result)
 
     @staticmethod
     def _parse_entry(entry):

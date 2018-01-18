@@ -35,7 +35,8 @@ class ofdTaxcom(Base):
                 if candidate:
                     result.append(candidate)
 
-        return result or None
+        if result:
+            return pyofd.providers.Result(items=result)
 
     @staticmethod
     def _parse_entry(entry):

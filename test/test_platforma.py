@@ -37,11 +37,13 @@ class PlatformaTest(unittest.TestCase):
 
     def test_valid_parse(self):
         result = self.provider.validate(fpd=504931317, fn=8710000100186516, fd=136682)
-        self.assertEqual(self.valid_receipt_items, result)
+        self.assertIsNotNone(result)
+        self.assertEqual(self.valid_receipt_items, result.items)
 
     def test_alt_receipt(self):
         result = self.provider.validate(fpd=1154793488, fn=8710000100199134, fd=12659)
-        self.assertEqual(self.alt_valid_receipt_items, result)
+        self.assertIsNotNone(result)
+        self.assertEqual(self.alt_valid_receipt_items, result.items)
 
     def test_provider(self):
         receipt = pyofd.OFDReceipt(fpd=504931317, fn=8710000100186516, fd=136682)
