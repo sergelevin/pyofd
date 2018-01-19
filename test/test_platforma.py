@@ -3,6 +3,8 @@
 import unittest
 import pyofd.providers.platforma
 import pyofd
+from decimal import Decimal
+from datetime import datetime
 
 class PlatformaTest(unittest.TestCase):
     valid_receipt_items = [
@@ -39,6 +41,23 @@ class PlatformaTest(unittest.TestCase):
         result = self.provider.validate(fpd=504931317, fn=8710000100186516, fd=136682)
         self.assertIsNotNone(result)
         self.assertEqual(self.valid_receipt_items, result.items)
+
+    def test_full_parse(self):
+        result = self.provider.validate(fpd=504931317, fn=8710000100186516, fd=136682)
+        self.assertIsNotNone(result)
+        self.assertEqual('АО "Дикси Юг" Дикси-78722', result.seller_name)
+        self.assertEqual('197022, г. Санкт-Петербург Каменноостровский пр-кт, д. 64, лит. А', result.seller_address)
+        self.assertEqual('5036045205', result.inn)
+        self.assertEqual(Decimal('822.91'), result.total)
+        self.assertEqual('5036045205', result.inn)
+        self.assertEqual('8710000100186516', result.fn)
+        self.assertEqual('136682', result.fd)
+        self.assertEqual('504931317', result.fpd)
+        self.assertEqual(336, result.shift_no)
+        self.assertEqual(233, result.receipt_no)
+        self.assertEqual('КА Олейникова', result.cashier)
+        self.assertEqual('0000051440037872', result.rn_kkt)
+        self.assertEqual(datetime(year=2018, month=1, day=10, hour=17, minute=37), result.purchase_date)
 
     def test_alt_receipt(self):
         result = self.provider.validate(fpd=1154793488, fn=8710000100199134, fd=12659)
