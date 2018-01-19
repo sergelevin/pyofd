@@ -3,6 +3,8 @@
 import unittest
 import pyofd.providers.taxcom
 import pyofd
+from decimal import Decimal
+from datetime import datetime
 
 class TaxcomTest(unittest.TestCase):
     valid_receipt_items = [
@@ -34,6 +36,22 @@ class TaxcomTest(unittest.TestCase):
         result = self.provider.validate(fpd=1027455652, total=1487)
         self.assertIsNotNone(result)
         self.assertEqual(self.valid_receipt_items, result.items)
+
+    def test_full_parse(self):
+        result = self.provider.validate(fpd=1027455652, total=1487)
+        self.assertIsNotNone(result)
+        self.assertEqual('ООО "Лента"', result.seller_name)
+        self.assertEqual('197022, Санкт-Петербург, пр. Чкаловский, д. 50, ЛИТ.Б.', result.seller_address)
+        self.assertEqual('7814148471', result.inn)
+        self.assertEqual(Decimal('1487.00'), result.total)
+        self.assertEqual('8710000101263672', result.fn)
+        self.assertEqual(9960, result.fd)
+        self.assertEqual('1027455652', result.fpd)
+        self.assertEqual(43, result.shift_no)
+        self.assertEqual(78, result.receipt_no)
+        self.assertEqual('Кудаева Герта Харитоновна', result.cashier)
+        self.assertEqual('0001482558031668', result.rn_kkt)
+        self.assertEqual(datetime(year=2018, month=1, day=7, hour=14, minute=51), result.purchase_date)
 
     def test_provider(self):
         receipt = pyofd.OFDReceipt(fpd=1027455652, total=1487)

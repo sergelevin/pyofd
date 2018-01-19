@@ -10,6 +10,20 @@ Taxcom OFD provider.
 from .base import Base
 import pyofd
 import lxml.html
+import datetime
+from decimal import Decimal
+
+
+def _strip(value):
+    return str(value).strip()
+
+
+def _to_datetime(value):
+    """ Example: 10.01.2018 17:37
+
+    :return: datetime
+    """
+    return datetime.datetime.strptime(str(value), '%d.%m.%Y %H:%M')
 
 
 class ofdTaxcom(Base):
@@ -28,15 +42,24 @@ class ofdTaxcom(Base):
                 return
 
         result = []
-        for report in root.find_class('receipt_report'):
-            entries = report.getchildren()[1]
-            for entry in entries.find_class('verticalBlock'):
-                candidate = self._parse_entry(entry.xpath('.//table')[0])
-                if candidate:
-                    result.append(candidate)
+        report = root.find_class('receipt_report')
+        if report:
+            report = report[0]
 
+        entries = report.getchildren()[1]
+        for entry in entries.find_class('verticalBlock'):
+            candidate = self._parse_entry(entry.xpath('.//table')[0])
+            if candidate:
+                result.append(candidate)
+
+        tables = report.xpath('./table')
         if result:
-            return pyofd.providers.Result(items=result)
+            recognized_fields = {}
+            recognized_fields.update(self._parse_top_entry(report.getchildren()[0]))
+            recognized_fields.update(self._parse_receipt_details(tables[-2]))
+            recognized_fields.update(self._parse_total(tables[-5]))
+
+            return pyofd.providers.Result(items=result, **recognized_fields)
 
     @staticmethod
     def _parse_entry(entry):
@@ -51,3 +74,33 @@ class ofdTaxcom(Base):
             return pyofd.ReceiptEntry(title=title, price=price, qty=quantity, subtotal=subtotal)
         except:
             return None
+
+    @staticmethod
+    def _parse_top_entry(entry):
+        rows = entry.findall('tr')
+        result = {
+            'seller_name': _strip(rows[0].xpath('.//span')[0].text),
+            'inn': _strip(rows[1].xpath('.//span')[0].text),
+            'seller_address': _strip(rows[2].xpath('.//span')[1].text),
+            'purchase_date': _to_datetime(rows[4].xpath('.//span')[1].text),
+            'receipt_no': int(rows[5].xpath('.//span/span')[0].text),
+            'shift_no': int(rows[6].xpath('.//span/span')[0].text),
+            'cashier': _strip(rows[7].xpath('.//span/span')[1].text),
+        }
+        return result
+
+    @staticmethod
+    def _parse_receipt_details(entry):
+        rows = entry.findall('tr')
+        result = {
+            'rn_kkt': _strip(rows[5].xpath('.//span')[1].text),
+            'fn': _strip(rows[6].xpath('.//span')[1].text),
+            'fd': int(rows[7].xpath('.//span')[1].text),
+            'fpd': _strip(rows[9].xpath('.//span')[1].text),
+        }
+        return result
+
+    @staticmethod
+    def _parse_total(entry):
+        rows = entry.findall('tr')
+        return {'total': Decimal(rows[1].xpath('.//span')[0].text)}
