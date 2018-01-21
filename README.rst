@@ -54,6 +54,12 @@ For some basic examples read unit tests in `test`_ directory. More complicated e
 
 * `load_receipt.py <https://github.com/sergelevin/pyofd/blob/master/examples/load_receipt.py>`_: Load receipt by
   known attributes and save items into tab-delimited file.
+* `xlsx_receipt.py <https://github.com/sergelevin/pyofd/blob/master/examples/xlsx_receipt.py>`_: Load receipt by
+  known attributes and export it to MS Excel (r) .xlsx file. If `nalog.ru <http://nalog.ru>`_ official receipt
+  check application credentials are provided in ``PYOFD_NALOGRU_LOGIN`` and ``PYOFD_NALOGRU_PASSWORD`` environment
+  variables, receipt lookup via ``NalogRu`` provider is also performed. Excel file is filled with formulas and
+  conditional formatting suitable for my personal receipt handling needs - column *F* is for partial refund and
+  columns *G* to *Z* - for receipt entries categorization with autocounting subtotal across categories.
 
 .. _pip: https://pip.pypa.io/
 .. _bobby_boy: https://github.com/ohbobbyboy/bobby_boy/
