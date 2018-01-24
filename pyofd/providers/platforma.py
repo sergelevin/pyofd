@@ -128,9 +128,9 @@ class ofdPlatforma(Base):
         children = fragment.xpath('.//div')
 
         result = {
-            'seller_name': _undup_spaces(_strip(children[1].text)),
-            'seller_address': _undup_spaces(_strip(children[2].text)),
-            'inn': _extract_inn(_strip(children[3].text)),
+            'seller_name': _undup_spaces(_strip(children[0].text)),
+            'seller_address': _undup_spaces(_strip(children[1].text)),
+            'inn': _extract_inn(_strip(children[2].text)),
         }
         return result
 
