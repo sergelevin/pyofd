@@ -11,6 +11,9 @@ from functools import total_ordering
 from decimal import Decimal
 
 
+__version__ = '0.1.0'
+
+
 @total_ordering
 class ReceiptEntry:
     def __init__(self, title, price, qty, subtotal):
