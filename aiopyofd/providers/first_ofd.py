@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-pyofd.providers.first_ofd
+aiopyofd.providers.first_ofd
 
 1-OFD provider.
 (c) Serge A. Levin, 2018
@@ -9,9 +9,9 @@ pyofd.providers.first_ofd
 
 
 from .base import Base
-import pyofd
-import pyofd.providers
-import urllib.request as _request
+import aiopyofd
+import aiopyofd.providers
+from aiohttp.client import ClientSession
 import json
 from decimal import Decimal
 import datetime
@@ -57,7 +57,7 @@ class ofd1OFD(Base):
         'retailPlaceAddress': ('seller_address', _strip),
     }
 
-    def validate(
+    async def validate(
             self,
             fpd=None,
             total=None,
@@ -66,6 +66,7 @@ class ofd1OFD(Base):
             fn=None,
             inn=None,
             purchase_date=None,
+            loop=None,
     ):
         request_body = json.dumps({
             'fiscalDriveId': str(fn),
@@ -74,12 +75,13 @@ class ofd1OFD(Base):
         }, separators=(',', ':'))
         request = self._build_request(self.urlPhase1, request_body)
 
-        data = self._get_json_data(request)
+        data = await self._get_json_data(request, loop)
         if 'status' in data and 'uid' in data and data['status'] == 1:
             receipt_guid = data['uid']
         else:
             return None
-        data = self._get_json_data(self.urlPhase2.format(receipt_guid=receipt_guid))
+
+        data = await self._get_json_data(self.urlPhase2.format(receipt_guid=receipt_guid), loop)
 
         try:
             items = data['ticket']['items']
@@ -96,11 +98,11 @@ class ofd1OFD(Base):
             ticket = data['ticket']
             recognized_fields = {v[0]: v[1](ticket[k]) for k, v in self._jsonTicketFieldsMapping.items() if k in ticket}
             recognized_fields.update({v[0]: v[1](data[k]) for k, v in self._jsonRootFieldsMapping.items() if k in data})
-            return pyofd.providers.Result(items=result, **recognized_fields)
+            return aiopyofd.providers.Result(items=result, **recognized_fields)
 
     @staticmethod
     def _build_request(url, data):
-        return _request.Request(
+        return dict(
             url=url,
             data=data.encode('utf-8'),
             headers={
@@ -110,20 +112,22 @@ class ofd1OFD(Base):
         )
 
     @staticmethod
-    def _get_json_data(url):
-        try:
-            response = _request.urlopen(url)
-        except IOError:
-            return {}
+    async def _get_json_data(url, loop=None):
+        if isinstance(url, dict):
+            params = url
+        else:
+            params={'method': 'GET', 'url': url}
 
-        if response.getcode() != 200:
-            return {}
+        async with ClientSession(loop=loop) as session:
+            response = await session.request(**params)
+            if response.status != 200:
+                return {}
 
-        data = response.read()
-        try:
-            return json.loads(data.decode('utf-8'))
-        except json.JSONDecodeError:
-            return {}
+            data = await response.read()
+            try:
+                return json.loads(data.decode('utf-8'))
+            except json.JSONDecodeError:
+                return {}
 
     @staticmethod
     def _parse_entry(entry):
@@ -133,7 +137,7 @@ class ofd1OFD(Base):
             price = _to_decimal(entry['price']) / 100
             name = _strip(entry['name'])
 
-            return pyofd.ReceiptEntry(name, price, quantity, subtotal)
+            return aiopyofd.ReceiptEntry(name, price, quantity, subtotal)
         except KeyError:
             return None
 

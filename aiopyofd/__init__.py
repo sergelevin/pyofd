@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 
 """
-pyofd
+aiopyofd
 (c) Serge A. Levin, 2018
 """
 
 
-import pyofd.providers
 from functools import total_ordering
 from decimal import Decimal
+from asyncio import get_event_loop, wait, FIRST_COMPLETED
+import aiopyofd.providers
 
 
-__version__ = '0.1.0'
+__version__ = '0.0.1.dev'
 
 
 @total_ordering
@@ -76,11 +77,15 @@ class OFDReceipt:
         self.provider = None
         self._fields = fields
 
-    def load_receipt(self, check_providers=None):
+    async def load_receipt(self, check_providers=None, loop=None):
         """
         Validates data over known OFD providers and loads receipt details
 
+        Providers are checked in parallel and first one giving non-empty result is treated as correct
+        This method is a coroutine
+
         :param check_providers: Single provider instance or iterable of providers to load receipt from
+        :param loop: asyncio event loop
         :return: True if could validate and load receipt data, False otherwise
         """
         if self.provider:
@@ -90,20 +95,42 @@ class OFDReceipt:
             if not hasattr(check_providers, '__iter__'):
                 check_providers = (check_providers,)
         else:
-            check_providers = pyofd.providers.get_providers()
+            check_providers = aiopyofd.providers.get_providers()
 
         args = {k: getattr(self, k, None) for k in self._fields}
-        for provider in check_providers:
-            if not provider.is_candidate(**args):
-                continue
 
-            result = provider.validate(**args)
-            if result:
-                self.provider = provider
-                self.result = result
-                return True
+        check_providers = [provider for provider in check_providers if provider.is_candidate(**args)]
+        if not check_providers:
+            return False
 
-        return False
+        if loop is None:
+            loop = get_event_loop()
+
+        def wrap(o):
+            async def f():
+                check_result = await o.validate(loop=loop, **args)
+                return o, check_result
+            return loop.create_task(f())
+
+        pending = [wrap(provider) for provider in check_providers]
+        done = False
+
+        while not done and pending:
+            finished, pending = await wait(pending, loop=loop, return_when=FIRST_COMPLETED)
+            for candidate in finished:
+                if not candidate.cancelled() and candidate.exception() is None:
+                    provider, result = candidate.result()
+                    if result:
+                        done = True
+                        self.provider = provider
+                        self.result = result
+                        break
+
+        for n in pending:
+            n.cancel()
+            wait(pending, loop=loop)
+
+        return done
 
     @property
     def items(self):

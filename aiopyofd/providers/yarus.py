@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 """
-pyofd.providers.yarus
+aiopyofd.providers.yarus
 Yarus OFD provider.
 (c) Serge A. Levin, 2018
 """
 
 from .base import Base
-import pyofd
+import aiopyofd
 import json
 from decimal import Decimal
 import datetime
@@ -70,7 +70,7 @@ class ofdYarus(Base):
         if result:
             ticket = raw_data['requestmessage']
             recognized_fields = {v[0]: v[1](ticket[k]) for k, v in self._jsonTicketFieldsMapping.items() if k in ticket}
-            return pyofd.providers.Result(items=result, **recognized_fields)
+            return aiopyofd.providers.Result(items=result, **recognized_fields)
 
     @staticmethod
     def _parse_entry(entry):
@@ -80,6 +80,6 @@ class ofdYarus(Base):
             price = _to_decimal(entry['price']) / 100
             name = _strip(entry['name'])
 
-            return pyofd.ReceiptEntry(name, price, quantity, subtotal)
+            return aiopyofd.ReceiptEntry(name, price, quantity, subtotal)
         except KeyError:
             return None

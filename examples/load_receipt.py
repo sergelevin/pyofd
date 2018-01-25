@@ -6,12 +6,13 @@ load_receipt - PyOFD example to export single receipt to tab-delimited file
 """
 
 
-import pyofd
+import aiopyofd
 import argparse
 import sys
 import os
 import urllib.parse
 import datetime
+import asyncio
 
 parser = argparse.ArgumentParser(description='Example script to export receipt to tab-delimited file')
 parser.add_argument('-fp', '-fpd',
@@ -79,8 +80,10 @@ def main(argv):
     if url is not None:
         receipt_fields.update(parse_url(url))
 
-    receipt = pyofd.OFDReceipt(**receipt_fields)
-    result = receipt.load_receipt()
+    receipt = aiopyofd.OFDReceipt(**receipt_fields)
+    task = asyncio.get_event_loop().create_task(receipt.load_receipt())
+    asyncio.get_event_loop().run_until_complete(task)
+    result = task.result()
 
     if not result:
         sys.stderr.write('Receipt not found')

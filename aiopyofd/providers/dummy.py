@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-pyofd.providers.dummy
+aiopyofd.providers.dummy
 
 Dummy OFD provider. It checks all receipts as invalid
 (c) Serge A. Levin, 2018

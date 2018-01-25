@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 """
-pyofd.providers.ofd
+aiopyofd.providers.ofd
 OFD.Ru OFD provider.
 (c) Serge A. Levin, 2018
 """
 
 from .base import Base
-import pyofd
+import aiopyofd
 import json
 from decimal import Decimal
 import datetime
@@ -69,7 +69,7 @@ class ofdOfdRu(Base):
         if result:
             document = raw_data['Document']
             recognized_fields = {v[0]: v[1](document[k]) for k, v in self._jsonFieldsMapping.items() if k in document}
-            return pyofd.providers.Result(items=result, **recognized_fields)
+            return aiopyofd.providers.Result(items=result, **recognized_fields)
 
     @staticmethod
     def _parse_entry(entry):
@@ -79,6 +79,6 @@ class ofdOfdRu(Base):
             price = _to_decimal(entry['Price']) / 100
             name = _strip(entry['Name'])
 
-            return pyofd.ReceiptEntry(name, price, quantity, subtotal)
+            return aiopyofd.ReceiptEntry(name, price, quantity, subtotal)
         except KeyError:
             return None

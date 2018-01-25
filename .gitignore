@@ -6,5 +6,5 @@ build
 dist
 
 htmlcov
-pyofd.egg-info
+aiopyofd.egg-info
 __pycache__

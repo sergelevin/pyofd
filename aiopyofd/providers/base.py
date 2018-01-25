@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
 """
-pyofd.providers.base
+aiopyofd.providers.base
 
 Base OFD provider. Concrete OFD providers should inherit from this base and have a name like ofdXXX
 (c) Serge A. Levin, 2018
 """
 
-import urllib.parse as _parse
-import urllib.request as _request
+from aiohttp.client import ClientSession
 import io
+import urllib.parse
 
 
 class Base:
@@ -61,7 +61,7 @@ class Base:
         """
         return self.urlTemplate.format(**context)
 
-    def validate(
+    async def validate(
             self,
             fpd=None,
             total=None,
@@ -70,6 +70,7 @@ class Base:
             fn=None,
             inn=None,
             purchase_date=None,
+            loop=None,
     ):
         """ Tries to load receipt detail from OFD provider website
 
@@ -80,33 +81,35 @@ class Base:
         :param fn: Receipt fiscal number (FN)
         :param inn: Seller's taxpayer identifier (INN)
         :param purchase_date: Purchase date and time
+        :param loop: asyncio event loop
         """
         context = {k: v for k, v in locals().items() if k != 'self'}
 
-        q_context = { ('q_' + k): _parse.quote(str(v)) for k, v in context.items() if v is not None}
+        q_context = { ('q_' + k): urllib.parse.quote(str(v)) for k, v in context.items() if v is not None}
         context.update(q_context)
 
         url = self.get_request_url(**context)
+        if isinstance(url, dict):
+            params = url
+        else:
+            params = {'method': 'GET', 'url': url}
 
-        try:
-            response = _request.urlopen(url)
-        except IOError:
-            return None
+        async with ClientSession(loop=loop) as session:
+            response = await session.request(**params)
+            if response.status != 200:
+                return None
 
-        if response.getcode() != 200:
-            return None
+            data = await response.read()
 
-        data = response.read()
-
-        try:
-            return self.parse_response(io.BytesIO(data))
-        except:
-            return None
+            try:
+                return self.parse_response(io.BytesIO(data))
+            except:
+                return None
 
     def parse_response(self, data):
         """overridable to try parsing data, received from server
 
         :param data: BytesIO with data to be parsed
-        :return: list of pyofd.ReceiptEntry if data is recognised
+        :return: list of aiopyofd.ReceiptEntry if data is recognised
         """
         pass

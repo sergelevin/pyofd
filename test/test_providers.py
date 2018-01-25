@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-import pyofd
+import aiopyofd
 from datetime import datetime
-
+from asyncio import wait, Task, ALL_COMPLETED
+from test import AsyncTestCase, sync
 
 receipts_data = {
     'Taxcom': {
@@ -51,28 +52,39 @@ receipts_data = {
 }
 
 
-class ProvidersTest(unittest.TestCase):
-    def _test_single_provider(self, provider):
+class ProvidersTest(AsyncTestCase):
+    async def _test_single_provider(self, provider):
         self.assertIn(provider, receipts_data)
         kwargs = receipts_data[provider]
-        receipt = pyofd.OFDReceipt(**kwargs)
-        result = receipt.load_receipt()
+        receipt = aiopyofd.OFDReceipt(**kwargs)
+        result = await receipt.load_receipt()
 
         self.assertIsNotNone(result)
         self.assertIsNotNone(receipt.provider)
         self.assertEqual(provider, receipt.provider.providerName)
 
-    def test_taxcom(self):
-        self._test_single_provider('Taxcom')
+    @sync
+    async def test_taxcom(self):
+        await self._test_single_provider('Taxcom')
 
-    def test_platforma(self):
-        self._test_single_provider('Platforma')
+    @sync
+    async def test_platforma(self):
+        await self._test_single_provider('Platforma')
 
-    def test_first_ofd(self):
-        self._test_single_provider('1-OFD')
+    @sync
+    async def test_first_ofd(self):
+        await self._test_single_provider('1-OFD')
 
-    def test_yarus(self):
-        self._test_single_provider('Yarus')
+    @sync
+    async def test_yarus(self):
+        await self._test_single_provider('Yarus')
 
-    def test_ofd_ru(self):
-        self._test_single_provider('OfdRu')
+    @sync
+    async def test_ofd_ru(self):
+        await self._test_single_provider('OfdRu')
+
+    @sync
+    async def test_parallel(self):
+        all_tasks = [Task(self._test_single_provider(k)) for k in receipts_data.keys()]
+        await wait(all_tasks, loop=self.loop, return_when=ALL_COMPLETED)
+        results = [task.result() for task in all_tasks]

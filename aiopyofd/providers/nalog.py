@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 """
-pyofd.providers.nalog
+aiopyofd.providers.nalog
 OFD provider for checking receipts via nalog.ru API
 (c) Serge A. Levin, 2018
 """
 
 from .base import Base
-import pyofd
+import aiopyofd
 import json
 import urllib.request as _request
 import base64
@@ -71,7 +71,7 @@ class NalogRu(Base):
             'Device-OS': 'None'
         }
 
-        return _request.Request(url, headers=headers, method='GET')
+        return dict(method='POST', url=url, headers=headers)
 
     def parse_response(self, data):
         raw_data = json.loads(data.read().decode('utf-8'))
@@ -90,7 +90,7 @@ class NalogRu(Base):
         if result:
             document = raw_data['document']['receipt']
             recognized_fields = {v[0]: v[1](document[k]) for k, v in self._jsonFieldsMapping.items() if k in document}
-            return pyofd.providers.Result(items=result, **recognized_fields)
+            return aiopyofd.providers.Result(items=result, **recognized_fields)
 
     def _parse_entry(self, entry):
         try:
@@ -99,6 +99,6 @@ class NalogRu(Base):
             price = _to_decimal(entry['price']) / 100
             name = _strip(entry['name'])
 
-            return pyofd.ReceiptEntry(name, price, quantity, subtotal)
+            return aiopyofd.ReceiptEntry(name, price, quantity, subtotal)
         except KeyError:
             return None

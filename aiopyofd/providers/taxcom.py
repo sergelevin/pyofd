@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 """
-pyofd.providers.taxcom
+aiopyofd.providers.taxcom
 
 Taxcom OFD provider.
 (c) Serge A. Levin, 2018
 """
 
 from .base import Base
-import pyofd
+import aiopyofd
 import lxml.html
 import datetime
 from decimal import Decimal
@@ -59,7 +59,7 @@ class ofdTaxcom(Base):
             recognized_fields.update(self._parse_receipt_details(tables[-2]))
             recognized_fields.update(self._parse_total(tables[-5]))
 
-            return pyofd.providers.Result(items=result, **recognized_fields)
+            return aiopyofd.providers.Result(items=result, **recognized_fields)
 
     @staticmethod
     def _parse_entry(entry):
@@ -71,7 +71,7 @@ class ofdTaxcom(Base):
             price    = rows[1].xpath('.//span')[1].text
             subtotal = rows[3].xpath('.//span')[1].text
 
-            return pyofd.ReceiptEntry(title=title, price=price, qty=quantity, subtotal=subtotal)
+            return aiopyofd.ReceiptEntry(title=title, price=price, qty=quantity, subtotal=subtotal)
         except:
             return None
 

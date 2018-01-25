@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-pyofd.providers.platforma
+aiopyofd.providers.platforma
 
 Platforma OFD provider.
 (c) Serge A. Levin, 2018
@@ -9,9 +9,9 @@ Platforma OFD provider.
 
 
 from .base import Base
-import pyofd
+import aiopyofd
 import lxml.html
-import pyofd.providers
+import aiopyofd.providers
 from decimal import Decimal
 import datetime
 
@@ -76,7 +76,7 @@ class ofdPlatforma(Base):
             check = root.find_class('check')[0]
             recognized_fields.update(self._extract_receipt_no(check))
 
-            return pyofd.providers.Result(items=result, **recognized_fields)
+            return aiopyofd.providers.Result(items=result, **recognized_fields)
 
     @staticmethod
     def _parse_entry(entry):
@@ -90,7 +90,7 @@ class ofdPlatforma(Base):
             price    = qty_and_price[2]
             subtotal = rows[-2].text
 
-            return pyofd.ReceiptEntry(title=title, price=price, qty=quantity, subtotal=subtotal)
+            return aiopyofd.ReceiptEntry(title=title, price=price, qty=quantity, subtotal=subtotal)
         except:
             return None
 

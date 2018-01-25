@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-pyofd.providers
+aiopyofd.providers
 (c) Serge A. Levin, 2018
 """
 

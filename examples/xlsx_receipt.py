@@ -6,14 +6,15 @@ xlsx_receipt - PyOFD example to export single receipt to MS Excel workbook
 """
 
 
-import pyofd
+import aiopyofd
 import argparse
 import sys
 import os
 import urllib.parse
 import datetime
 import xlsxwriter
-from pyofd.providers import NalogRu
+import asyncio
+from aiopyofd.providers import NalogRu
 
 parser = argparse.ArgumentParser(description='Example script to export receipt to tab-delimited file')
 parser.add_argument('-fp', '-fpd',
@@ -69,6 +70,13 @@ def parse_url(url):
     return result
 
 
+async def load_receipt(receipt, nalog):
+    result = await receipt.load_receipt(check_providers=nalog)
+    if result:
+        return result
+    return await receipt.load_receipt()
+
+
 def main(argv):
     arguments = parser.parse_args(argv)
     receipt_fields = {k: getattr(arguments, k)
@@ -85,8 +93,11 @@ def main(argv):
     nalog.apiLogin = os.environ.get('PYOFD_NALOGRU_LOGIN', None)
     nalog.apiPassword = os.environ.get('PYOFD_NALOGRU_PASSWORD', None)
     
-    receipt = pyofd.OFDReceipt(**receipt_fields)
-    result = receipt.load_receipt(check_providers=nalog) or receipt.load_receipt()
+    receipt = aiopyofd.OFDReceipt(**receipt_fields)
+    receipt = aiopyofd.OFDReceipt(**receipt_fields)
+    task = asyncio.get_event_loop().create_task(load_receipt(receipt, nalog))
+    asyncio.get_event_loop().run_until_complete(task)
+    result = task.result()
 
     if not result:
         sys.stderr.write('Receipt not found')
