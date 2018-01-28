@@ -71,7 +71,7 @@ class NalogRu(Base):
             'Device-OS': 'None'
         }
 
-        return dict(method='POST', url=url, headers=headers)
+        return dict(method='GET', url=url, headers=headers)
 
     def parse_response(self, data):
         raw_data = json.loads(data.read().decode('utf-8'))
