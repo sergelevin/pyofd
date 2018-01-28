@@ -13,11 +13,11 @@ It is inspired by `bobby_boy`_ project.
 Installation
 ============
 
-.. Install via `pip`_:
-..
-.. ::
-..
-..     $ pip install pyofd
+Install via `pip`_:
+
+::
+
+    $ pip install pyofd
 
 Install from source:
 
