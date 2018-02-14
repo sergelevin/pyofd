@@ -54,7 +54,6 @@ class ofdYandex(Base):
             if candidate:
                 result.append(candidate)
 
-        tables = report.xpath('./table')
         if result:
             recognized_fields = {}
             recognized_fields.update(self._parse_receipt_details(report))
