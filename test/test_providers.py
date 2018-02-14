@@ -49,6 +49,14 @@ receipts_data = {
         'fn': 8710000100617432,
         'purchase_date': datetime(year=2018, month=1, day=16, hour=13, minute=11)
     },
+    'Yandex': {
+        'fpd': 1637738986,
+        'total': '301.35',
+        'rn_kkt': 1563284018105,
+        'fd': 144712,
+        'inn': 7704340310,
+        'purchase_date': datetime(year=2018, month=2, day=13, hour=20, minute=9)
+    },
 }
 
 
@@ -84,7 +92,12 @@ class ProvidersTest(AsyncTestCase):
         await self._test_single_provider('OfdRu')
 
     @sync
+    async def test_yandex(self):
+        await self._test_single_provider('Yandex')
+
+    @sync
     async def test_parallel(self):
         all_tasks = [Task(self._test_single_provider(k)) for k in receipts_data.keys()]
         await wait(all_tasks, loop=self.loop, return_when=ALL_COMPLETED)
         results = [task.result() for task in all_tasks]
+
