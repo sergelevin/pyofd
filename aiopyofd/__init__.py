@@ -12,7 +12,7 @@ from asyncio import get_event_loop, wait, FIRST_COMPLETED
 import aiopyofd.providers
 
 
-__version__ = '0.0.1.dev'
+__version__ = '0.0.2.dev'
 
 
 @total_ordering
