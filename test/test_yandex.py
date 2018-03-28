@@ -8,8 +8,7 @@ from datetime import datetime
 
 class YandexTest(unittest.TestCase):
     valid_receipt_items = [
-            pyofd.ReceiptEntry(title='Перевозка пассажиров и багажа', qty=1, price='287.00', subtotal='287.00'),
-            pyofd.ReceiptEntry(title='Перевозка пассажиров и багажа', qty=1, price='14.35' , subtotal='14.35' ),
+            pyofd.ReceiptEntry(title='Перевозка пассажиров и багажа', qty=1, price='390.00', subtotal='390.00'),
         ]
 
     def setUp(self):
@@ -19,28 +18,28 @@ class YandexTest(unittest.TestCase):
         self.assertIsNone(self.provider.validate(rn_kkt=0, fd=0, fpd=0))
 
     def test_provider_minimal(self):
-        self.assertIsNotNone(self.provider.validate(rn_kkt=1563284018105, fd=144712, fpd=1637738986))
+        self.assertIsNotNone(self.provider.validate(rn_kkt=840594031594, fd=238872, fpd=3826178549))
 
     def test_valid_parse(self):
-        result = self.provider.validate(rn_kkt=1563284018105, fd=144712, fpd=1637738986)
+        result = self.provider.validate(rn_kkt=840594031594, fd=238872, fpd=3826178549)
         self.assertIsNotNone(result)
         self.assertEqual(self.valid_receipt_items, result.items)
 
     def test_full_parse(self):
-        result = self.provider.validate(rn_kkt=1563284018105, fd=144712, fpd=1637738986)
+        result = self.provider.validate(rn_kkt=840594031594, fd=238872, fpd=3826178549)
         self.assertIsNotNone(result)
         self.assertEqual('ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ "ЯНДЕКС.ТАКСИ"', result.seller_name)
-        self.assertEqual('Московская обл, г Ивантеевка, ул Заречная, д 1', result.seller_address)
+        self.assertEqual('Московская обл, г Мытищи, ул Силикатная, д 19', result.seller_address)
         self.assertEqual('7704340310', result.inn)
-        self.assertEqual(Decimal('301.35'), result.total)
-        self.assertEqual('8710000101117311', result.fn)
-        self.assertEqual('1637738986', result.fpd)
+        self.assertEqual(Decimal('390'), result.total)
+        self.assertEqual('8710000101113214', result.fn)
+        self.assertEqual('3826178549', result.fpd)
         self.assertEqual('undefined', result.cashier)
-        self.assertEqual('0001563284018105', result.rn_kkt)
-        self.assertEqual(datetime(year=2018, month=2, day=13, hour=20, minute=9), result.purchase_date)
+        self.assertEqual('0000840594031594', result.rn_kkt)
+        self.assertEqual(datetime(year=2018, month=3, day=7, hour=10, minute=57), result.purchase_date)
 
     def test_provider(self):
-        receipt = pyofd.OFDReceipt(rn_kkt=1563284018105, fd=144712, fpd=1637738986)
+        receipt = pyofd.OFDReceipt(rn_kkt=840594031594, fd=238872, fpd=3826178549)
 
         result = receipt.load_receipt()
 

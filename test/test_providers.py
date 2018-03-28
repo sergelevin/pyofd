@@ -49,12 +49,12 @@ receipts_data = {
         'purchase_date': datetime(year=2018, month=1, day=16, hour=13, minute=11)
     },
     'Yandex': {
-        'fpd': 1637738986,
-        'total': '301.35',
-        'rn_kkt': 1563284018105,
-        'fd': 144712,
+        'fpd': 3826178549,
+        'total': '390',
+        'rn_kkt': 840594031594,
+        'fd': 238872,
         'inn': 7704340310,
-        'purchase_date': datetime(year=2018, month=2, day=13, hour=20, minute=9)
+        'purchase_date': datetime(year=2018, month=3, day=7, hour=10, minute=57)
     },
 }
 
