@@ -56,6 +56,15 @@ receipts_data = {
         'inn': 7704340310,
         'purchase_date': datetime(year=2018, month=3, day=7, hour=10, minute=57)
     },
+    'Kontur': {
+        'fpd': 1753141947,
+        'total': 838,
+        'rn_kkt': 1573495028400,
+        'fd': 3250,
+        'inn': 7736567560,
+        'fn': 8710000101500109,
+        'purchase_date': datetime(year=2018, month=5, day=6, hour=19, minute=44)
+    }
 }
 
 
@@ -87,3 +96,6 @@ class ProvidersTest(unittest.TestCase):
 
     def test_yandex(self):
         self._test_single_provider('Yandex')
+
+    def test_kontur(self):
+        self._test_single_provider('Kontur')

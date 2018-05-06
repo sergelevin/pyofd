@@ -9,3 +9,4 @@ from .yarus import ofdYarus
 from .ofd import ofdOfdRu
 from .nalog import NalogRu
 from .yandex import ofdYandex
+from .kontur import ofdKontur
