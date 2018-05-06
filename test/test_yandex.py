@@ -29,7 +29,7 @@ class YandexTest(unittest.TestCase):
         result = self.provider.validate(rn_kkt=840594031594, fd=238872, fpd=3826178549)
         self.assertIsNotNone(result)
         self.assertEqual('ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ "ЯНДЕКС.ТАКСИ"', result.seller_name)
-        self.assertEqual('Московская обл, г Мытищи, ул Силикатная, д 19', result.seller_address)
+        self.assertEqual('Московская обл., Мытищи, ул Силикатная, 19', result.seller_address)
         self.assertEqual('7704340310', result.inn)
         self.assertEqual(Decimal('390'), result.total)
         self.assertEqual('8710000101113214', result.fn)
