@@ -36,8 +36,8 @@ def _to_datetime(value):
 class ofdOfdRu(Base):
     providerName = 'OfdRu'
     urlTemplate = 'https://ofd.ru/api/rawdoc/RecipeInfo?' \
-        'Fn={fn:0>16}&Kkt={rn_kkt:0>16}&Inn={inn}&Num=7481&Sign={fpd:0>10}'
-    requiredFields = ('fn', 'inn', 'rn_kkt', 'fpd')
+        'Fn={fn:0>16}&Kkt={rn_kkt:0>16}&Inn={inn}&Num={fd}&Sign={fpd:0>10}'
+    requiredFields = ('fn', 'inn', 'rn_kkt', 'fpd', 'fd')
 
     _jsonFieldsMapping = {
         'Operator': ('cashier', _strip),
