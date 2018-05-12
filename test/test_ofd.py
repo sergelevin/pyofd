@@ -19,18 +19,18 @@ class OfdRuTest(unittest.TestCase):
         self.provider = pyofd.providers.ofd.ofdOfdRu()
 
     def test_provider_invalid(self):
-        self.assertIsNone(self.provider.validate(fpd='0'*10, rn_kkt='0'*16, inn='0'*10, fn='0'*16))
+        self.assertIsNone(self.provider.validate(fpd='0'*10, rn_kkt='0'*16, inn='0'*10, fn='0'*16, fd=0))
 
     def test_provider_minimal(self):
-        self.assertIsNotNone(self.provider.validate(fpd='2981623349', inn='7814339162', rn_kkt='0000489397013091', fn='8710000100617432'))
+        self.assertIsNotNone(self.provider.validate(fpd='2981623349', inn='7814339162', rn_kkt='0000489397013091', fn='8710000100617432', fd=7481))
 
     def test_valid_parse(self):
-        result = self.provider.validate(fpd='2981623349', rn_kkt='0000489397013091', inn='7814339162', fn='8710000100617432')
+        result = self.provider.validate(fpd='2981623349', rn_kkt='0000489397013091', inn='7814339162', fn='8710000100617432', fd=7481)
         self.assertIsNotNone(result)
         self.assertEqual(self.valid_receipt_items, result.items)
 
     def test_provider(self):
-        receipt = pyofd.OFDReceipt(fpd='2981623349', rn_kkt='0000489397013091', inn='7814339162', fn='8710000100617432')
+        receipt = pyofd.OFDReceipt(fpd='2981623349', rn_kkt='0000489397013091', inn='7814339162', fn='8710000100617432', fd=7481)
 
         result = receipt.load_receipt()
 

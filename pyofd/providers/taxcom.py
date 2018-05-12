@@ -93,10 +93,10 @@ class ofdTaxcom(Base):
     def _parse_receipt_details(entry):
         rows = entry.findall('tr')
         result = {
-            'rn_kkt': _strip(rows[5].xpath('.//span')[1].text),
-            'fn': _strip(rows[6].xpath('.//span')[1].text),
-            'fd': int(rows[7].xpath('.//span')[1].text),
-            'fpd': _strip(rows[9].xpath('.//span')[1].text),
+            'rn_kkt': _strip(rows[7].xpath('.//span')[1].text),
+            'fn': _strip(rows[8].xpath('.//span')[1].text),
+            'fd': int(rows[9].xpath('.//span')[1].text),
+            'fpd': _strip(rows[11].xpath('.//span')[1].text),
         }
         return result
 
