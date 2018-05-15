@@ -37,3 +37,9 @@ class OfdRuTest(unittest.TestCase):
         self.assertEqual(True, result)
         self.assertIs(receipt.provider.__class__, self.provider.__class__)
         self.assertEqual(self.valid_receipt_items, receipt.items)
+
+    def test_issue_1(self):
+        '''
+        Test case for https://github.com/sergelevin/pyofd/issues/1
+        '''
+        self.assertIsNotNone(self.provider.validate(fpd='1626880333', inn='7825439514', rn_kkt='0000520679026739', fn='8710000100767988', fd=160669))
