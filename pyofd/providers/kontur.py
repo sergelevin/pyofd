@@ -35,7 +35,7 @@ def _to_decimal100(value):
 
 class ofdKontur(Base):
     providerName = 'Kontur'
-    urlTemplate = 'https://ofd-api.kontur.ru/v1/cash-receipt/?fiscalSignature={fpd:0>10}&fnSerialNumber={fn:0>10}&fiscalDocumentNumber={fd}'
+    urlTemplate = 'https://ofd-api.kontur.ru/v1/cash-receipt/kontur/?fiscalSignature={fpd:0>10}&fnSerialNumber={fn:0>10}&fiscalDocumentNumber={fd}'
     requiredFields = ('fn', 'fd', 'fpd')
 
     _jsonTicketFieldsMapping = {
