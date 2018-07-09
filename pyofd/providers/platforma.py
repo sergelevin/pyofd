@@ -100,7 +100,7 @@ class ofdPlatforma(Base):
         result = {
             'purchase_date': _to_datetime(_strip(rows[0].text)),
             'shift_no': int(_strip(rows[1].text)),
-            'cashier': _strip(rows[3].text),
+            'cashier': _strip(rows[2].text),
         }
         return result
 
