@@ -10,9 +10,11 @@ from .base import Base
 import pyofd
 import json
 import urllib.request as _request
+import urllib.parse as _parse
 import base64
 from decimal import Decimal
 import datetime
+import io
 
 
 def _strip(value):
@@ -41,7 +43,10 @@ class NalogRu(Base):
 
     urlTemplate = 'http://proverkacheka.nalog.ru:8888/' \
                   'v1/inns/*/kkts/*/fss/{fn:0>16}/tickets/{fd}?fiscalSign={fpd:0>10}&sendToEmail=no'
-    requiredFields = ('fn', 'fd', 'fpd')
+    requiredFields = ('fn', 'fd', 'fpd', 'purchase_date', 'total')
+
+    urlValidate = 'http://proverkacheka.nalog.ru:8888/' \
+                  'v1/ofds/*/inns/*/fss/{fn:0>16}/operations/1/tickets/{fd}?fiscalSign={fpd:0>10}&date={s_purchase_date}&sum={total100}'
 
     _jsonFieldsMapping = {
         'user': ('seller_name', _strip),
@@ -60,6 +65,51 @@ class NalogRu(Base):
 
     def is_candidate(self, **kwargs):
         return self.apiLogin and self.apiPassword and super(NalogRu, self).is_candidate(**kwargs)
+
+    def validate(
+            self,
+            fpd=None,
+            total=None,
+            rn_kkt=None,
+            fd=None,
+            fn=None,
+            inn=None,
+            purchase_date=None,
+    ):
+        """ Tries to load receipt detail from OFD provider website
+
+        :param fpd: Receipt signature (FPD in terms of Tax service of Russia)
+        :param total: Receipt total
+        :param rn_kkt: Cash machine serial number (RN KKT)
+        :param fd: Receipt number (FD)
+        :param fn: Receipt fiscal number (FN)
+        :param inn: Seller's taxpayer identifier (INN)
+        :param purchase_date: Purchase date and time
+        """
+        context = {k: v for k, v in locals().items() if k != 'self'}
+
+        if not self.check_exists(**context):
+            return None
+
+        q_context = { ('q_' + k): _parse.quote(str(v)) for k, v in context.items() if v is not None}
+        context.update(q_context)
+
+        url = self.get_request_url(**context)
+
+        try:
+            response = _request.urlopen(url)
+        except IOError:
+            return None
+
+        if response.getcode() != 200:
+            return None
+
+        data = response.read()
+
+        try:
+            return self.parse_response(io.BytesIO(data))
+        except:
+            return None
 
     def get_request_url(self, **context):
         url = super(NalogRu, self).get_request_url(**context)
@@ -102,3 +152,28 @@ class NalogRu(Base):
             return pyofd.ReceiptEntry(name, price, quantity, subtotal)
         except KeyError:
             return None
+
+    def check_exists (
+            self,
+            fpd=None,
+            total=None,
+            rn_kkt=None,
+            fd=None,
+            fn=None,
+            inn=None,
+            purchase_date=None,
+    ):
+        context = {k: v for k, v in locals().items() if k != 'self'}
+        if 'total' in context.keys():
+            context['total100'] = int(Decimal(context['total']) * 100)
+        if 'purchase_date' in context.keys():
+            context['s_purchase_date'] = purchase_date.strftime('%Y%m%dT%H%M')
+
+        url = self.urlValidate.format(**context)
+
+        try:
+            response = _request.urlopen(url)
+        except IOError:
+            return False
+
+        return response.getcode() < 300

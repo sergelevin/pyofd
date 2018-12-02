@@ -5,6 +5,9 @@ import pyofd.providers.nalog
 import pyofd
 import pyofd.providers
 import os
+from decimal import Decimal
+from datetime import datetime
+
 
 
 class NalogRuTest(unittest.TestCase):
@@ -39,24 +42,39 @@ class NalogRuTest(unittest.TestCase):
 
     def test_provider_invalid(self):
         self._skip_if_no_credentials()
-        self.assertIsNone(self.provider.validate(fpd='0'*10, rn_kkt='0'*16, inn='0'*10, fn='0'*16, fd=0))
+        self.assertIsNone(self.provider.validate(fpd='0'*10, rn_kkt='0'*16, inn='0'*10, fn='0'*16, fd=0, total=0,
+                                                 purchase_date=datetime(year=2000, month=1, day=1, hour=0, minute=0)))
 
     def test_provider_minimal(self):
         self._skip_if_no_credentials()
         self.assertIsNotNone(self.provider.validate(
-            fpd='2981623349', inn='7814339162', rn_kkt='0000489397013091', fn='8710000100617432', fd=7481))
+            fpd='2981623349', inn='7814339162', rn_kkt='0000489397013091', fn='8710000100617432', fd=7481, total=330,
+            purchase_date=datetime(year=2018, month=1, day=16, hour=13, minute=11)))
+
+    def test_receipt_exists(self):
+        fields = {
+            'total' : Decimal(4939.00),
+            'fpd' : 4105559338,
+            'fn' : 9288000100066501,
+            'fd' : 37072,
+            'purchase_date' : datetime(year=2018, month=11, day=24, hour=23, minute=36)
+        }
+        self.assertTrue(self.provider.check_exists(**fields))
+
 
     def test_valid_parse(self):
         self._skip_if_no_credentials()
         result = self.provider.validate(
-            fpd='2981623349', rn_kkt='0000489397013091', inn='7814339162', fn='8710000100617432', fd=7481)
+            fpd='2981623349', rn_kkt='0000489397013091', inn='7814339162', fn='8710000100617432', fd=7481, total=330,
+            purchase_date=datetime(year=2018, month=1, day=16, hour=13, minute=11))
         self.assertIsNotNone(result)
         self.assertEqual(self.valid_receipt_items, result.items)
 
     def test_provider(self):
         self._skip_if_no_credentials()
         receipt = pyofd.OFDReceipt(
-            fpd='2981623349', rn_kkt='0000489397013091', inn='7814339162', fn='8710000100617432', fd=7481)
+            fpd='2981623349', rn_kkt='0000489397013091', inn='7814339162', fn='8710000100617432', fd=7481, total=330,
+            purchase_date=datetime(year=2018, month=1, day=16, hour=13, minute=11))
 
         result = receipt.load_receipt(check_providers = self.provider)
 
