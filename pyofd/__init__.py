@@ -11,7 +11,7 @@ from functools import total_ordering
 from decimal import Decimal
 
 
-__version__ = '0.1.6-dev'
+__version__ = '0.1.6'
 
 
 @total_ordering
